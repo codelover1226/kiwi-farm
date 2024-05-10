@@ -31,7 +31,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
         </div>
         <div style={{ padding: '35px 0px', width: '100%' }}>
           <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
-            <div style={{ fontSize: '14px', color: '#BC9067', textAlign: 'center' }}>This is a newsletter from the union center.</div>
+            <div style={{ fontSize: '14px', color: '#BC9067', textAlign: 'center' }}>This is a newsletter from the Kiwi Farm.</div>
           </div>
         </div>
       </div>
