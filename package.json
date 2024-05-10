@@ -28,6 +28,7 @@
     "@sanity/portable-text-editor": "^3.37.2",
     "@supabase/supabase-js": "^2.42.0",
     "@vercel/analytics": "^1.1.1",
+    "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cookie": "^0.6.0",

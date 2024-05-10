@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { CartProduct } from "@/components/ProductCardItem";
 import { IProduct } from '@/store/features/products/productsAPI';
@@ -12,11 +12,16 @@ import { Button } from "@/components/ui/button";
 export default function About() {
   
   const dispatch = useAppDispatch();
+  
   const user = useAppSelector(selectUser);
-  const products: IProduct[] = useAppSelector(selectProducts);
   const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
+  
+  useEffect(() => {
+    
+    dispatch(getProducts({ type: "all", user: user.id }));
+  }, []);
+  const products: IProduct[] = useAppSelector(selectProducts);
   const subtotal = cartItems.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0);
-  dispatch(getProducts({ type: "all", user: user.id }));
   const router = useRouter();
   return (
     <main className=" min-h-screen mb-20 pt-10 pb-10 px-5 md:px-20">
@@ -79,7 +84,7 @@ export default function About() {
           );
         })}
       </div>
-      <div className="w-full mx-auto max-w-[1280]  float-right">
+      <div className="w-full mx-auto max-w-[1280px]">
         <div className="w-full flex items-center justify-end">
           <div className="space-y-3 mt-3">
             <div className="flex">
