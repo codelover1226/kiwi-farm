@@ -54,9 +54,12 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     
     if(value > maxQty){
       setQty(maxQty)
-    } else if ( value > 0) {
-      setQty(value);
+    } else if(value < 1){
+      setQty(0)
     }
+     else {
+      setQty(value);
+    } 
   } 
   const addToCart = () =>{
     if(selectedOption === null){
@@ -136,7 +139,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
               className='w-[150px]'
               placeholder='Qty'
               type='number'
-              min={-1}
+              min={0}
               max={maxQty}
               value={qty}
               onChange={onChange}
