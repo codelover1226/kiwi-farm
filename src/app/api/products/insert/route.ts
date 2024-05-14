@@ -44,8 +44,6 @@ export async function POST(req : Request) {
         const type = formData.get("type"); 
         const flavorString = formData.get("flavor");
         const flavor = flavorString? JSON.parse(flavorString as string) : null;
-        const couponString = formData.get("coupon");
-        const coupon = couponString? JSON.parse(couponString as string) : null
         try {
           const {error} = await supabase
             .from('products')
@@ -59,8 +57,7 @@ export async function POST(req : Request) {
               type,
               user_id,
               image: imgUrl,
-              flavor,
-              coupon,
+              flavor
             });
 
           if (error) {

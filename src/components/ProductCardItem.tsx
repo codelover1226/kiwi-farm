@@ -59,14 +59,19 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     }
   } 
   const addToCart = () =>{
-    
+    if(selectedOption === null){
+      toast.error("You must select Flavor");
+      return
+    }
     const newCartItem : CartProduct = {
       product_id: product.id,
       flavor_name : product.flavor[selectedOption].name,
       qty: qty
     }
+
     cartItems.push(newCartItem);
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    toast.success("You just added an item successfully")
   }
   return (
     <div>
@@ -88,9 +93,6 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
             <CardDescription className='text-xl text-start font-bold px-4'>
                 <div className=''>
                   <pre>price    : ${product.price}</pre>
-                </div>
-                <div className=''>
-                  <pre>quantity :  {product.quantity}</pre>
                 </div>
                 <div className='text-lg font-normal '>
                   description : {product.description}

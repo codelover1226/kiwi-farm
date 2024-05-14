@@ -74,6 +74,8 @@ export async function POST(request : Request, params : {
   const cartItemsString = formData.get("cartItems");
   const cartItems = cartItemsString? JSON.parse(cartItemsString as string) : null
   const deliveryDate = formData.get("delivery_date")
+  const deliveryInstruction= formData.get("deliveryInstruction")
+  const coupon_code = formData.get("coupon_code")
   
   try {
     const {error} = await supabase
@@ -88,7 +90,9 @@ export async function POST(request : Request, params : {
           refName,
           refPhoneNumber,
           cartItems,
-          deliveryDate
+          deliveryDate,
+          deliveryInstruction,
+          coupon_code
       })
 
     if (error) {
@@ -110,6 +114,7 @@ export async function POST(request : Request, params : {
             <div style="font-size: 18px; color: #666; margin-top:5px; margin-bottom:5px;">Phone Number: ${phoneNumber}</div>
             <div style="font-size: 18px; color: #666; margin-top:5px; margin-bottom:5px;">Referral Name: ${refName}</div>
             <div style="font-size: 18px; color: #666; margin-top:5px; margin-bottom:5px;">Referral PhoneNumber: ${refPhoneNumber}</div>
+            <div style="font-size: 18px; color: #666; margin-top:5px; margin-bottom:5px;">Referral PhoneNumber: ${deliveryInstruction}</div>
           </div>
           <div style="padding: 35px 0px; width: 100%;">
             <div style="width: 100%; max-width: 400px; margin: 0 auto;">

@@ -41,19 +41,20 @@ export default function About() {
         </div>
         {cartItems.map((item: CartProduct, index: number) => {
           const product : IProduct = products.find(p => p.id === item.product_id);
-          console.log(products)
-          console.log(product)
           return (
-            <div key={index} className="w-full max-w-[1280px] flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
-              <div className="w-full text-left sm:flex">
-                <Image
-                  className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
-                  src={product?.image}
-                  alt='grass'
-                  width={300}
-                  height={300}
-                />
-                <div className="w-full content-center">
+            <div key={index} className="w-full max-w-[1280px] sm:flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
+              <div className="w-full flex text-left">
+                <div className="w-[140px] sm:w-[140px] text-center">
+                  <Image
+                    className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
+                    src={product?.image}
+                    alt='grass'
+                    width={300}
+                    height={300}
+                  />
+                </div>
+                
+                <div className="w-full content-center ml-6">
                   <p className="sm:ml-6 w-full text-left content-center">
                     {product?.title}
                   </p>  
@@ -61,7 +62,7 @@ export default function About() {
                     <span className="font-bold">Flavor</span> : {item.flavor_name}
                   </p>
                 </div>
-                <div className="w-full text-center content-center">
+                <div className="w-full text-right sm:text-center content-center">
                   <button 
                     className="bg-[#f85454] hover:bg-[#ff775f] w-[80px] h-10 rounded-sm transition-all duration-700"
                     onClick={() => {
@@ -75,23 +76,23 @@ export default function About() {
                   </button>
                 </div>
               </div>
-              <div className="w-full sm:flex content-center">
-                <p className="w-full text-center sm:text-left content-center">$ {product? product.price : 'N/A'}</p>
-                <p className="w-full text-center sm:text-left content-center">{item.qty}</p>
-                <p className="w-full text-center sm:text-right content-center">$ {item.qty * Number(product?.price)}</p>
+              <div className="w-full flex content-center mt-6 sm:mt-0">
+                <p className="w-full text-left content-center flex items-center"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                <p className="w-full text-left content-center flex items-center"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
+                <p className="w-full text-right content-center justify-end flex items-center"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
               </div>
             </div>
           );
         })}
       </div>
       <div className="w-full mx-auto max-w-[1280px]">
-        <div className="w-full flex items-center justify-end">
+        <div className="w-full flex items-center justify-center sm:justify-end">
           <div className="space-y-3 mt-3">
             <div className="flex">
               <p className="text-lg font-semibold">{cartItems.length} items</p>
             </div>
             <div className="flex">
-              <p className="text-lg font-semibold">Subtotal:</p>
+              <p className="text-lg font-semibold ">Subtotal:</p>
               <p className="text-lg font-semibold">$ {subtotal.toFixed(2)}</p>
             </div>
             <div className="">

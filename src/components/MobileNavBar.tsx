@@ -45,7 +45,10 @@ const components: { title: string; href: string }[] = [
     title: "New Members",
     href: "/membership",
   },
-
+  {
+    title: 'Cart',
+    href: "/cart"
+  },
   {
     title: "Login",
     href: "/login",

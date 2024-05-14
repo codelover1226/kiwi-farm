@@ -36,7 +36,7 @@ export function ProductPageB() {
   const categoriesRender = [];
   categories.forEach((category, i) => {
     categoriesRender.push(
-      <Link href={"/dashboard/" + category.title}>
+      <Link href={"/dashboard/" + category.title} key={i}>
         <Card
           className='max-w-sm h-[28rem] rounded overflow-hidden shadow-lg p-2 hover:bg-accent'
           key={i}>

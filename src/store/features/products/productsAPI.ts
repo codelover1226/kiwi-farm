@@ -15,10 +15,6 @@ export interface IProduct {
     name: string,
     qty: number
   }];
-  coupon: [{
-    code: string,
-    discount: number
-  }];
 }
 
 export const fetchProducts = async ({type, user}:{type:string, user:string}) => {

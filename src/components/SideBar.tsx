@@ -54,6 +54,14 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
                 <Link href="/dashboard/pre-rolls" className="block text-lg ml-5 p-2 hover:bg-slate-100">
                     Pre-rolls
                 </Link>
+
+                {isVisitor?
+                <></>
+                :
+                    <Link href="/dashboard/coupon" className="block text-lg p-2 hover:bg-slate-100">
+                        Coupons
+                    </Link>
+                }
             </div>
             <div className={className3 + " absolute transition-opacity top-0 w-[100vw] h-full bg-black z-0 bg-opacity-30 sm:hidden block"}>
 

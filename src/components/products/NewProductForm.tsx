@@ -40,14 +40,6 @@ export const newProductSchema = z.object({
   quantity: z.number().min(0, { message: "quantity must be over 0." }),
   type: z.string().min(1, { message: "type is required." }),
   price: z.number(),
-  // flavor: z.array(z.object({
-  //   name: z.string().min(1, {message: "Flavor name is required"}),
-  //   qty: z.number().min(0, {message: "Qty must be over"})
-  // })),
-  // coupon: z.array(z.object({
-  //   code: z.string().min(1, { message: "Coupon code is required." }),
-  //   discount: z.number().min(0, { message: "Discount must be over 0." }),
-  // })).optional()
 });
 
 export type TNewProductSchema = z.infer<typeof newProductSchema>;
@@ -66,9 +58,6 @@ export function NewProductForm() {
   const [flavor, setFlavor] = useState([]);
   const [flavor_name, setFlavorName] = useState('');
   const [flavor_qty, setFlavorQty] = useState(0);
-  const [coupon, setCoupon] = useState([]);
-  const [coupon_code, setCouponCode] = useState('');
-  const [coupon_discount, setCouponDiscount] = useState(0);
 
   
   useEffect(() => {
@@ -92,7 +81,6 @@ export function NewProductForm() {
     form.setValue("price", Number(product.price));
     form.setValue("quantity", Number(product.quantity));
     setFlavor(Array.isArray(product.flavor)? product.flavor : []);
-    setCoupon(Array.isArray(product.coupon)? product.coupon : []);
 
     if (product.image) {
       setPreviewUrl(`${product.image}`);
@@ -118,7 +106,6 @@ export function NewProductForm() {
   });
 
   async function onSubmit(values: z.infer<typeof newProductSchema>) {
-    console.log("onSubmit");
     try {
       const formData = new FormData();
       formData.append("imgFile", imgFile);
@@ -129,7 +116,6 @@ export function NewProductForm() {
         }
       }
       formData.append("flavor", JSON.stringify(flavor));
-      formData.append("coupon", JSON.stringify(coupon));
       formData.append("user_id", user.id);
       setIsLoading(true);
       if (selectedProduct == "-1") {
@@ -213,13 +199,6 @@ export function NewProductForm() {
       if(value < 0){setFlavorQty (0)}
       setFlavorQty(value);
     }
-    else if(target.id === 'cc'){
-      setCouponCode(value)
-    } else if (target.id === 'cd'){
-      if(value > 100){setCouponDiscount(100)}
-      else if(value< 0) {setCouponDiscount(0)}
-      else setCouponDiscount(value)
-    }
   };
   const handleInsert = (event: any) => {
     event.preventDefault();
@@ -241,18 +220,6 @@ export function NewProductForm() {
     
       setFlavorName('');
       setFlavorQty(0);
-    } else if(event.target.id === 'coupon_add'){
-      if (!coupon_code){
-        toast.error("Input correctly")
-        return
-      }
-      const newCoupon = {
-        code: coupon_code,
-        discount: coupon_discount
-      }
-      setCoupon ([...coupon, newCoupon])
-      setCouponCode('');
-      setCouponDiscount(0);
     }
   };
   const handleFlavorDelete = (event: any, indexToDelete: number) => {
@@ -266,18 +233,13 @@ export function NewProductForm() {
   const handleCouponDelete = (event: any, indexToDelete: number) => {
     event.preventDefault();
     console.log('Deleting coupon at index:', indexToDelete); // Debugging line
-    setCoupon(prevCoupon => {
-      const newCoupon = prevCoupon.filter((_, index) => index!== indexToDelete);
-      console.log('Previous coupon array:', prevCoupon);
-      console.log('New coupon array:', newCoupon);
-      return newCoupon;
-    });
+
   }; 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex py-5 mb-0 justify-center lg:px-20 xl:px-40">
         <div className="flex flex-grow md:flex-row flex-wrap text-left  items-center gap-2 px-6">
-          <div className=" flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4">
+          <div className="flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4">
             <div className="mt-0 w-full min-w-[128px]">
               <FormField
                 control={form.control}
@@ -526,68 +488,6 @@ export function NewProductForm() {
                         className="bg-white text-black hover:bg-[#ffffef]"
                         id="flav_delete"
                         onClick={(e) => handleFlavorDelete(e, index)}
-                      >
-                        -
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="mt-0 w-full min-w-[128px]">
-              <div className="space-y-2 flex w-full flex-wrap justify-center gap-3">
-                <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                  Coupon :
-                </FormLabel>
-                <div className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] flex space-x-2">
-                  <Input
-                    type="text"
-                    className="bg-white mt-0"
-                    placeholder="Code"
-                    value={coupon_code}
-                    onChange={handleInputChange}
-                    id="cc"
-                  />
-                  <Input
-                    type="number"
-                    className="bg-white mt-0 w-[30px] sm:w-[80px]"
-                    placeholder="Discount"
-                    value={coupon_discount}
-                    min={0}
-                    max={100}
-                    onChange={handleInputChange}
-                    id="cd"
-                  />
-                  <Button
-                    className="bg-white text-black hover:bg-[#ffffef]"
-                    id="coupon_add"
-                    onClick={handleInsert}
-                  >
-                    +
-                  </Button>
-                  <FormMessage className="absolute" />
-                </div>
-              </div>
-              <div className="space-y-2 flex w-full flex-wrap justify-center gap-3">
-                {
-                  Array.isArray(coupon) && coupon.length>0 ?<FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center h-full">
-                  Coupon List :
-                </FormLabel> : <></>
-                }
-                
-                <div className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px]">
-                  {Array.isArray(coupon) && coupon.map((item, index) => (
-                    <div key={index} className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
-                      <div className="bg-white w-full place-content-center">
-                        {item.code}
-                      </div>
-                      <div className="bg-white mt-0 w-[30px] sm:w-[80px] place-content-center">
-                        {item.discount}
-                      </div>
-                      <Button
-                        className="bg-white text-black hover:bg-[#ffffef]"
-                        id="flav_delete"
-                        onClick={(e) => handleCouponDelete(e, index)}
                       >
                         -
                       </Button>
