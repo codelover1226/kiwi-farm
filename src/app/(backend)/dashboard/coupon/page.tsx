@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 
 import classnames from 'classnames';
 
-export const newProductSchema = z.object({
+const newCouponSchema = z.object({
   code: z.string().min(1, { message: "Code is required." }),
   discount: z.number().min(0, { message: "quantity must be over 0." }),
 });
@@ -128,14 +128,14 @@ export default function Home(){
   }, []);
 
   console.log(coupons)
-  const form = useForm<z.infer<typeof newProductSchema>>({
-    resolver: zodResolver(newProductSchema),
+  const form = useForm<z.infer<typeof newCouponSchema>>({
+    resolver: zodResolver(newCouponSchema),
     defaultValues: {
       code: "",
       discount: 0,
     },
   });
-  async function onSubmit(values: z.infer<typeof newProductSchema>){
+  async function onSubmit(values: z.infer<typeof newCouponSchema>){
     try {
       const formData = new FormData();
       for (const key in values) {
