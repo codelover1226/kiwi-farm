@@ -538,11 +538,29 @@ export default function About() {
           </div>
           <div className="w-full mx-auto max-w-[1280]  float-right">
             <div className="w-full flex items-center justify-center lg:justify-end">
-              <div className="space-y-3 mt-3">
-                <div className="flex">
-                  <p className="text-lg font-semibold">Total : </p>
-                  <p className="text-lg font-semibold"> $ {subtotal.toFixed(2)}</p>
+              
+              <div className="mt-3">
+                {
+                  !couponVal?.code?
+                  <>
+                  </>
+                  :
+                  <>
+                    <div className="flex space-x-2">
+                      <p className="text-[14px] font-semibold">Subtotal : </p>
+                      <p className="text-[14px]"> ${(subtotal*100/(100-couponVal.discount)).toFixed(2)}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <p className="text-[14px] font-semibold">Discount : </p>
+                      <p className="text-[14px]"> ${couponVal.discount} % off (-${(subtotal*(couponVal.discount)/(100-couponVal.discount)).toFixed(2)})</p>
+                    </div>
+                  </>
+                }
+                <div className="flex space-x-2 mt-6">
+                  <p className="text-[14px] font-semibold">Total : </p>
+                  <p className="text-[14px]"> $ {subtotal.toFixed(2)}</p>
                 </div>
+                
               </div>
             </div>
           </div>

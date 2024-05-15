@@ -89,14 +89,6 @@ export function NavMenu() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/cart" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Cart
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
           <div  onClick={handleLogin} className="cursor-pointer">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Login

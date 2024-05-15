@@ -74,6 +74,8 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
 
     cartItems.push(newCartItem);
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    localStorage.setItem('notification', 'true')
+    window.dispatchEvent(new Event("storage"));
     toast.success("You just added an item successfully")
   }
   return (
@@ -130,7 +132,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
             <button 
               className='bg-green-400 p-0 px-[10px] text-lg font-normal hover:bg-green-600 transition-colors duration-700'
               onClick={() => {
-                setQty(qty-1.0)
+                if(qty > 1) setQty(qty - 1.0);
               }}
               >
               -
@@ -148,7 +150,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
             <button 
               className='bg-green-400 p-0 px-2 text-lg font-normal hover:bg-green-600 transition-colors duration-700'
               onClick={() => {
-              setQty(qty+1.0)
+                if(qty < maxQty) setQty(qty + 1.0);
             }}>
               +
             </button>

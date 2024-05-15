@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { selectUser } from "@/store/features/auth/authSlice";
 import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
 import { Button } from "@/components/ui/button";
-
 export default function About() {
   
   const dispatch = useAppDispatch();
@@ -17,7 +16,6 @@ export default function About() {
   const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
   
   useEffect(() => {
-    
     dispatch(getProducts({ type: "all", user: user.id }));
   }, []);
   const products: IProduct[] = useAppSelector(selectProducts);
@@ -55,31 +53,35 @@ export default function About() {
                 </div>
                 
                 <div className="w-full content-center ml-6">
-                  <p className="sm:ml-6 w-full text-left content-center">
+                  <p className="sm:ml-6 w-full text-left content-center text-sm sm:text-[16px]">
                     {product?.title}
                   </p>  
-                  <p className="sm:ml-6 w-full text-left content-center">
+                  <p className="sm:ml-6 w-full text-left content-center text-sm sm:text-[16px]">
                     <span className="font-bold">Flavor</span> : {item.flavor_name}
                   </p>
                 </div>
-                <div className="w-full text-right sm:text-center content-center">
+                <div className="sm:w-full text-right sm:text-center content-center">
                   <button 
-                    className="bg-[#f85454] hover:bg-[#ff775f] w-[80px] h-10 rounded-sm transition-all duration-700"
+                    className="bg-[#f85454] hover:bg-[#ff775f] sm:w-[80px] sm:h-10 h-8 w-[70px] rounded-sm transition-all duration-700 text-sm sm:text-[16px]"
                     onClick={() => {
                       const newCartItems = [...cartItems];
                       newCartItems.splice(index, 1);
                       setCartItems(newCartItems);
                       localStorage.setItem('cartItems', JSON.stringify(newCartItems));
+                      window.dispatchEvent(new Event("storage"));
                     }}
                   >                  
                     Remove
                   </button>
+                  {/* <button className="bg-[#f85454] hover:bg-[#ff775f] rounded-full text-xs py-2 px-3 sm:hidden">
+                    X
+                  </button> */}
                 </div>
               </div>
               <div className="w-full flex content-center mt-6 sm:mt-0">
-                <p className="w-full text-left content-center flex items-center"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
-                <p className="w-full text-left content-center flex items-center"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
-                <p className="w-full text-right content-center justify-end flex items-center"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
+                <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
+                <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
               </div>
             </div>
           );

@@ -59,6 +59,7 @@ const saveState = (state: any): void => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('reduxState', serializedState);
+    window.dispatchEvent(new Event("storage"));
   } catch {
     // Ignore write errors
   }

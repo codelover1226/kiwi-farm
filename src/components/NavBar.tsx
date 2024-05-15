@@ -1,31 +1,47 @@
 'use client'
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import { NavMenu } from "@/components/NavMenu";
-import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-// import { Button } from "@/components/ui/button";
-import { CubeIcon, ExitIcon } from "@radix-ui/react-icons";
-import MobileNavBar from "@/components/MobileNavBar"; // import the MobileNavBar component
+import { ExitIcon } from "@radix-ui/react-icons";
+import MobileNavBar from "@/components/MobileNavBar";
 import { useRouter } from "next/navigation";
 import {
   logout,
   selectIsAdmin,
 } from "@/store/features/auth/authSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-
+import { selectUser } from "@/store/features/auth/authSlice";
+import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
+import { IProduct } from "@/store/features/products/productsAPI";
 export function NavBar({backend}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const isAdministrator = useAppSelector(selectIsAdmin);
-
+  const [items, setItems] = useState([]);
   const handleLogout = () => {
     router.push("/");
     dispatch(logout());
   }
 
-  // console.log(backend)
+  const products: IProduct[] = useAppSelector(selectProducts);
+  
+  const user = useAppSelector(selectUser);
+  useEffect(()=>{
+    dispatch(getProducts({ type: "all", user: user.id }));
+    const handleStorageChange = () => {
+      const cartItems = JSON.parse(localStorage.getItem("cartItems"));
+      if (cartItems) {
+        setItems(cartItems);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => { window.removeEventListener("storage", handleStorageChange);};
+  },[])
+  useEffect(() => {
+    setItems(JSON.parse(localStorage.getItem('cartItems')));
+  }, []);
+  console.log(items)
   return (
     <>
       {backend?
@@ -49,24 +65,41 @@ export function NavBar({backend}) {
               />
             </Link>
           </div>
-          {backend?
-          <>
-            <h2 className="text-3xl self-center hidden sm:block text-black text-center ">
-                {isAdministrator?"Admin":"Agent"} Dashboard
-            </h2>
-            <div className="flex h-16 items-center" onClick={handleLogout}>
-              <div className="flex items-center justify-center text-xl py-2 px-4 rounded-sm bg-slate-50 hover:bg-slate-200 cursor-pointer">
-                <span ><ExitIcon width={30} height={30}/></span>
+          <div className="flex">
+            
+            
+            {backend?
+            <>
+              <h2 className="text-3xl self-center hidden sm:block text-black text-center ">
+                  {isAdministrator?"Admin":"Agent"} Dashboard
+              </h2>
+              <div className="flex h-16 items-center" onClick={handleLogout}>
+                <div className="flex items-center justify-center text-xl py-2 px-4 rounded-sm bg-slate-50 hover:bg-slate-200 cursor-pointer">
+                  <span ><ExitIcon width={30} height={30}/></span>
+                </div>
               </div>
+            </>
+            :
+            <div className="flex flex-row gap-5 items-center">
+              <NavMenu />
+              <MobileNavBar />
             </div>
-          </>
-          :
-          <div className="flex flex-row gap-5 items-center">
-            <NavMenu />
-
-            <MobileNavBar />
+            }
+            <Link href={'/cart'} className="content-center">
+              <div className={`content-center relative cursor-pointer flex font-bold duration-200 w-[40px] `}>
+                <img src="./carticon.png" className="w-[35px]">
+                </img>
+                {/* {
+                  items.length>0? 
+                  <p className='text-xs hidden lg:block mt-1 ml-1 w-[120px]'> Items, Total ${items.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0)}</p>:
+                  <></>
+                } */}
+                <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
+                  {items.length}
+                </div>
+              </div>
+            </Link>
           </div>
-          }
         </div>
       </div>
     </>
