@@ -85,20 +85,18 @@ export function NavBar({backend}) {
               <MobileNavBar />
             </div>
             }
-            <Link href={'/cart'} className="content-center">
+            <div className="content-center" onClick={()=>{
+              localStorage.setItem('notification', 'false')
+              router.push('/cart')
+            }}>
               <div className={`content-center relative cursor-pointer flex font-bold duration-200 w-[40px] `}>
                 <img src="./carticon.png" className="w-[35px]">
                 </img>
-                {/* {
-                  items.length>0? 
-                  <p className='text-xs hidden lg:block mt-1 ml-1 w-[120px]'> Items, Total ${items.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0)}</p>:
-                  <></>
-                } */}
                 <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
                   {items.length}
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         </div>
       </div>

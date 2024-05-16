@@ -18,6 +18,7 @@ export default function About() {
   useEffect(() => {
     dispatch(getProducts({ type: "all", user: user.id }));
   }, []);
+  
   const products: IProduct[] = useAppSelector(selectProducts);
   const subtotal = cartItems.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0);
   const router = useRouter();
