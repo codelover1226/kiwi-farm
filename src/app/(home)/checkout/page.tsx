@@ -181,7 +181,8 @@ export default function About() {
         setCouponVal({
           id: "",
           code: "",
-          product: undefined
+          product: undefined,
+          discount: 0
         })
         for (let i = 0; i < cartItems.length; i++) {
           const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
