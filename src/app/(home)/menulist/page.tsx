@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import React, { useEffect } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import 'react-quill/dist/quill.snow.css'
@@ -70,13 +70,14 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const agents = useAppSelector(selectAgents);
   const user = useAppSelector(selectUser);
-  const [convertedText, setConvertedText] = useState("");
+  const convertedText = useMemo(()=> {
+    return (agents.find(p=> p.title === user.title))?.menuList;    
+  }, [agents])
   const reactElement = htmlToReactParser.parseWithInstructions(convertedText, ()=>true, processingInstructions);
 
   useEffect(() => {
     dispatch(getAgents(true));
-    setConvertedText((agents.find(p=> p.title === user.title))?.menuList);
-  }, []);
+  }, [convertedText]);
 
   return (
     <main className="flex min-h-screen flex-col items-center">
