@@ -3,14 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import * as Select from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,8 +16,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
-import { CustomSelect } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { selectProducts } from "@/store/features/products/productsSlice";
+import { getProducts } from "@/store/features/products/productsSlice";
+import _ from 'lodash';
 
 import classnames from 'classnames';
 
@@ -31,7 +32,7 @@ const newCouponSchema = z.object({
 export interface ICoupons {
   id: string;
   code: string;
-  discount: number;
+  product: Array<{product: string, discount: number}>;
 }
 
 interface SelectDemoProps {
@@ -99,6 +100,11 @@ export default function Home(){
   const [isLoading, setIsLoading] = useState(false)
   const [selectedCoupon, setSelectedCoupon] = useState<string | null>('-1')
   const [id, setId] = useState<string | null>("all")
+  const [selectedProduct, setSelectedProduct] = useState<string | null>("");
+  const dispatch = useAppDispatch();
+  dispatch(getProducts({ type: "all", user: 'all' }));
+  const products = useAppSelector(selectProducts);
+
   const getCoupons = async (id: string) => {
     try {
       const formData = new FormData();
@@ -114,11 +120,9 @@ export default function Home(){
       } else {
         const error = await response.json();
         toast.error(error);
-        console.error(error);
       }
     } catch (error) {
       toast.error(error.message);
-      console.error(error);
     }
   };
 
@@ -127,7 +131,6 @@ export default function Home(){
     getCoupons("all");
   }, []);
 
-  console.log(coupons)
   const form = useForm<z.infer<typeof newCouponSchema>>({
     resolver: zodResolver(newCouponSchema),
     defaultValues: {
@@ -135,6 +138,18 @@ export default function Home(){
       discount: 0,
     },
   });
+
+  const handleChange = (event: any) => {
+    setSelectedProduct(event.target.value);
+    let temp = coupons[selectedCoupon];
+    let product = temp?.product.findIndex(p=> p.product === event.target.value);
+    if (product !== -1) {
+      form.setValue('discount', Number(temp?.product[product].discount || 0));
+    }else{
+      form.setValue('discount', 0);
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof newCouponSchema>){
     try {
       const formData = new FormData();
@@ -144,9 +159,9 @@ export default function Home(){
           formData.append(key, value);
         }
       }
-      formData.append("id", id);
       setIsLoading(true);
       if (selectedCoupon == "-1") {
+        formData.append("product", JSON.stringify({product: selectedProduct, discount: form.getValues("discount")}));
         const response = await fetch("/api/coupons/insert", {
           method: "POST",
           body: formData,
@@ -157,11 +172,19 @@ export default function Home(){
         } else {
           const error = await response.json();
           toast.error(error);
-          console.error(error); 
         }
       } 
       else {
-        formData.append("id", id);
+        formData.append("id", coupons[id].id);
+        let cProduct = _.cloneDeep(coupons.find(p=> p.id === coupons[id].id));
+        let temp = cProduct.product;
+        let temp_product = temp.findIndex(p=> p.product === selectedProduct);
+        if (temp_product !== -1) {
+          temp[temp_product].discount = form.getValues("discount");
+        }else{
+          temp.push({product: selectedProduct, discount: form.getValues("discount")})
+        }
+        formData.append("product", JSON.stringify(temp));
         const response = await fetch("/api/coupons/update", {
           method: "POST",
           body: formData,
@@ -172,15 +195,14 @@ export default function Home(){
         } else {
           const error = await response.json();
           toast.error(error);
-          console.error(error);
         }
       }
     } catch (error) {
       toast.error(error.message);
-      console.error(error);
     }
     setIsLoading(false);
   }
+
   const discountChange = (event: any) =>{
     const value = parseInt(event.target.value);
     if (value < 0 || value > 100) {
@@ -188,18 +210,18 @@ export default function Home(){
     }
     form.setValue("discount", value);
   }
+
   const handleInputChange = (e : any) => {
     setSelectedCoupon(e)
     if(e === '-1'){
       form.setValue("code", "")
-      form.setValue("discount", 0)
       setId("")
       return
     }
-    form.setValue("code", coupons[e].code)
-    form.setValue("discount", coupons[e].discount)
-    setId(coupons[e].id)
+    setId(e);
+    form.setValue("code", coupons[e].code);
   }
+
   async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     try {
@@ -209,7 +231,7 @@ export default function Home(){
       }
       const response = await fetch("/api/coupons/delete", {
         method: "POST",
-        body: JSON.stringify({id: id}),
+        body: JSON.stringify({id: coupons[id].id}),
         headers: {
           "Content-Type": "application/json",
         },
@@ -229,6 +251,7 @@ export default function Home(){
         toast.error(error.message);
     }
   }
+
   return(
     <div className="">
       <h2 className="text-2xl py-3 self-center text-center">Manage Coupons</h2>
@@ -275,6 +298,39 @@ export default function Home(){
                                 placeholder="Input Code"
                                 {...field}
                               />
+                              <FormMessage className="absolute" />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-0 w-full min-w-[128px]">
+                    <FormField
+                      control={form.control}
+                      name="discount"
+                      render={({ field }) => (
+                        <FormItem className="flex w-full flex-wrap justify-center gap-3">
+                          <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
+                            Special Deal Rules :
+                          </FormLabel>
+                          <FormControl
+                            className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                            style={{
+                              marginTop: 0,
+                            }}
+                          >
+                            <div>
+                              <select 
+                                className='mx-0 w-full bg-white text-sm py-2 my-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md' 
+                                value={selectedProduct} 
+                                onChange={handleChange}
+                                >
+                                <option value="" disabled>Select Product</option>
+                                {products.map((item, index) => (
+                                  <option key={index} value={item.id}>{item.title}</option>
+                                ))}
+                              </select>
                               <FormMessage className="absolute" />
                             </div>
                           </FormControl>

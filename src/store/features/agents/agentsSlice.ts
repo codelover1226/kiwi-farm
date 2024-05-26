@@ -12,6 +12,7 @@ interface User {
     content: JsonObject;
     password: string;
     password1: string;
+    menuList: string;
 }
 export interface AgentsSliceState {
     isSuccess : boolean;

@@ -25,7 +25,6 @@ export async function POST(request : Request, params : {
             } else {
                 return NextResponse.json(JSON.stringify(data), {status: 200});
             }
-
         } else if (reqUser == "all") {
             const {data , error} = await supabase
                 .from('products')

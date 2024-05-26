@@ -17,7 +17,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "./ui/separator";
 
-export default function Popup() {
+export default function Popup({ openPopup1 }) {
   const [isClient, setIsClient] = useState(false);
   const [show, setShow] = useState(false); //show warning message
 
@@ -35,6 +35,7 @@ export default function Popup() {
       path: "/",
       maxAge: 3000,
     });
+    openPopup1(true);
     setIsOpen(false);
   };
 

@@ -124,7 +124,7 @@ export function NewProductForm() {
           body: formData,
         });
         if (response.status === 200) {
-          toast.success("You added the new product!.");
+          toast.success("You added the new product!");
           dispatch(getProducts({ type: "all", user: user.id }));
         } else {
           const error = await response.json();

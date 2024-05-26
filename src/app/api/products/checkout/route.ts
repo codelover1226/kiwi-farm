@@ -4,6 +4,7 @@ import supabase from '@/supabase/supabaseClient';
 import resend from 'resend';
 import { EmailTemplate } from '@/components/EmailTemplate';
 import axios from 'axios'
+import { IProduct } from '@/store/features/products/productsAPI';
 
 async function deductProductQuantities(cartItems) {
   const products = await getItems();
@@ -59,6 +60,23 @@ async function getItems() {
     return [];
   }
 }
+
+async function updateProducts(cProduct: Array<IProduct>) {
+  const {error} = await supabase
+  .from('products')
+  .upsert(cProduct.map(p=>{
+    let pp = {}
+    Object.keys(p).forEach(k=>{
+      if(k=='id'){return}
+      pp[k] = p[k]
+    })
+    return pp
+  }), { onConflict: 'title' });
+  if (error) {
+    return NextResponse.json(error.details, {status: 401});
+  }
+}
+
 export async function POST(request : Request, params : {
   action: string
 }) {
@@ -76,6 +94,7 @@ export async function POST(request : Request, params : {
   const deliveryDate = formData.get("delivery_date")
   const deliveryInstruction= formData.get("deliveryInstruction")
   const coupon_code = formData.get("coupon_code")
+  const cProduct = formData.get("cProduct");
   
   try {
     const {error} = await supabase
@@ -96,10 +115,13 @@ export async function POST(request : Request, params : {
       })
 
     if (error) {
-      
       return NextResponse.json(error.details, {status: 401});
     }
-    deductProductQuantities(cartItems)
+
+    let update = await updateProducts(JSON.parse(String(cProduct)));
+
+
+    // deductProductQuantities(cartItems);
       const emailHtml = `
       <h1>Welcome, ${name}!</h1>
       <div style="font-family: Arial, sans-serif; margin: 0; padding: 0;">

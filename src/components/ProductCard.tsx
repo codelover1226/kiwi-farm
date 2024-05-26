@@ -19,15 +19,18 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const router = useRouter();
+  let user_id1 = user.id;
+  if (Number(user_id1) === 12) {
+    user_id1 = 'all';
+  }
 
   useEffect(() => {
-    dispatch(getProducts({ type: product, user: user_id }));
-    setItems(JSON.parse(localStorage.getItem('cartItems') || '[]'));
+    dispatch(getProducts({ type: product, user: user_id1 }));
+    setItems(JSON.parse(localStorage.getItem("cartItems") || '[]'));
     setNotification(localStorage.getItem('notification') || '');
-  }, [dispatch, product, user_id]);
+  }, [dispatch, product, user.id]);
 
   useEffect(() => {
-    dispatch(getProducts({ type: "all", user: user.id }));
     const handleStorageChange = () => {
       const cartItems = JSON.parse(localStorage.getItem("cartItems") || '[]');
       const notificationStatus = localStorage.getItem('notification') || '';
@@ -38,8 +41,10 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
     };
     window.addEventListener("storage", handleStorageChange);
     return () => { window.removeEventListener("storage", handleStorageChange); };
-  }, [dispatch, user.id]);
+  }, [dispatch]);
+
   const lastProduct: IProduct = products.find(p => p.id === items[items.length-1]?.product_id)
+
   const handleCheckout = () => {
     localStorage.setItem('notification', 'false')
     window.dispatchEvent(new Event("storage"));
@@ -51,62 +56,7 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
     window.dispatchEvent(new Event("storage"));
     setNotification('false')
   }
-  // const productsRender = [];
 
-  // products.forEach((product: IProduct, i: number) => {
-  //   productsRender.push(
-  //     <Dialog key={'dialog' + i}>
-  //       <DialogTrigger>
-  //         <Card
-  //           className='max-w-sm h-[36rem] rounded overflow-hidden shadow-lg p-2 hover:bg-accent'
-  //           key={'card' + i}>
-  //           <CardHeader>
-  //             <Image
-  //               className='w-full bg-white rounded-full aspect-square object-cover'
-  //               src={product.image}
-  //               // src={product.images[0]}
-  //               alt='grass'
-  //               width={300}
-  //               height={300}
-  //             />
-  //             <CardTitle className='text-xl'>{product.title}</CardTitle>
-  //           </CardHeader>
-  //           <CardContent className='text-start'>
-  //             <CardDescription >
-  //               <div className='flex pb-3'>
-  //                 <div className='flex-1'>
-  //                   price    : ${product.price}
-  //                 </div>
-  //                 <div className='flex-1'>
-  //                   quantity : {product.quantity}
-  //                 </div>
-  //               </div>
-  //             </CardDescription>
-  //             {/* <CardDescription>price    : ${product.price}</CardDescription> */}
-  //             {/* <CardDescription>quantity : {product.quantity}</CardDescription> */}
-  //             <CardDescription>description : {product.description}</CardDescription>
-  //           </CardContent>
-  //         </Card>
-  //       </DialogTrigger>
-  //       <DialogContent className='' style={{scrollbarWidth:"none"}}>
-  //         <DialogHeader>
-  //           <DialogTitle className='text-center'>{product.title}</DialogTitle>
-  //           <DialogDescription>
-  //             {/* <PortableText value={product.content} /> */}
-  //             <Image
-  //               className='w-full bg-white rounded-full aspect-square object-cover'
-  //               src={product.image}
-  //               // src={product.images[0]}
-  //               alt='grass'
-  //               width={300}
-  //               height={300}
-  //             />
-  //           </DialogDescription>
-  //         </DialogHeader>
-  //       </DialogContent>
-  //     </Dialog>,
-  //   );
-  // });
   return (
     <div className='flex flex-row flex-wrap gap-6 justify-center m-2'>
       <div className='fixed top-[115px] right-0'>
@@ -141,7 +91,7 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
       </div>
       
       {products.map((product: IProduct, i: number) => { 
-        if( product.user_id != "12" ) return; 
+        // if( product.user_id != "12" ) return; 
         return (
           <Dialog key={'dialog' + i}>
             <ProductCardItem 

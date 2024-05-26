@@ -19,7 +19,7 @@ import { IProduct } from '@/store/features/products/productsAPI';
 import { Input } from './ui/input';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectUser } from '@/store/features/auth/authSlice';
-
+import { selectIsNothing, selectIsVisitor } from "@/store/features/auth/authSlice";
 import { toast } from "react-hot-toast";
 
 import './user.css'
@@ -34,19 +34,14 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
   const [qty, setQty] = useState< number | null>(null)
   const [selectedOption, setSelectedOption] = useState< number | null>(null)
   const [maxQty, setMaxQty] = useState <number | null>(0)
-  const user = useAppSelector(selectUser);
+  const isVisitor = useAppSelector(selectIsVisitor);
   const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-  
-  useEffect(() => {
-    if (product.flavor[selectedOption]) {
-      setMaxQty(product.flavor[selectedOption].qty);
-    } else {
-      setMaxQty(0); 
-    }
-  }, [selectedOption, product]);
+  const isNothing = useAppSelector(selectIsNothing);
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
+    setMaxQty(product.flavor[event.target.value].qty);
+    setQty(0);
   };
 
   const onChange = (event: any) => {
@@ -61,6 +56,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
       setQty(value);
     } 
   } 
+
   const addToCart = () =>{
     if(selectedOption === null){
       toast.error("You must select Flavor");
@@ -74,10 +70,11 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
 
     cartItems.push(newCartItem);
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    localStorage.setItem('notification', 'true')
+    localStorage.setItem('notification', 'true');
     window.dispatchEvent(new Event("storage"));
     toast.success("You just added an item successfully")
   }
+
   return (
     <div>
       <DialogTrigger>
@@ -96,9 +93,9 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
           </CardHeader>
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
-                <div className=''>
+                {(!isNothing || !isVisitor) && <div className=''>
                   <pre>price    : ${product.price}</pre>
-                </div>
+                </div>}
                 <div className='text-lg font-normal '>
                   description : {product.description}
                 </div>
@@ -107,7 +104,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
         </Card>
       </DialogTrigger>
       
-      <div className='w-full content-center text-center flex-row mt-6'>
+      {(!isNothing || !isVisitor) && <div className='w-full content-center text-center flex-row mt-6'>
         <div className='w-[280px] mx-auto flex'>
           <p className='content-center mr-[10px]'>
             Flavor :
@@ -162,7 +159,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
         >
           Add to cart
         </button>
-      </div>
+      </div>}
       <DialogContent className='' style={{scrollbarWidth:"none"}}>
         <DialogHeader>
           <DialogTitle className='text-center'>{product.title}</DialogTitle>

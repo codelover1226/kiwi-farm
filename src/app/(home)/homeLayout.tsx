@@ -3,13 +3,16 @@ import Footer from "@/components/Footer";
 import { NavBar } from "@/components/NavBar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Popup from "@/components/Popup";
+import Popup1 from "@/components/Popup1";
+import { useState } from "react";
 
 export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  console.log("Home Layout");
+
+  const [open, setOpen] = useState(false);
 
     return (    
       <div>
@@ -19,7 +22,8 @@ export default function HomeLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Popup />
+          <Popup openPopup1={setOpen}/>
+          {open && <Popup1 />}
           <NavBar backend={false}/>
 
           {children}

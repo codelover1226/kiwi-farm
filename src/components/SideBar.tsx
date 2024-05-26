@@ -1,7 +1,6 @@
 'use client'
 import Link from "next/link";
-import { useState, useEffect } from 'react';
-import { selectUser, selectIsVisitor } from "@/store/features/auth/authSlice";
+import { selectUser, selectIsVisitor, selectIsAgency } from "@/store/features/auth/authSlice";
 import { useAppSelector } from "@/store/hooks";
 
 export function SideBar({isAdmin, isActive, handleMenuClick}:
@@ -13,8 +12,7 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
 {
     const user = useAppSelector(selectUser);
     const isVisitor = useAppSelector(selectIsVisitor);
-    console.log("SideBar : " + isVisitor);
-    console.log(user);
+    const isAgency = useAppSelector(selectIsAgency);
     const className1 = isActive ? "w-[300px] z-50":"w-0";
     const className2 = isActive ? "ml-0 w-[300px]":"ml-[-300px]";
     const className3 = isActive ? "left-0 ":"left-[-100vw] bg-opacity-0";
@@ -60,6 +58,11 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
                 :
                     <Link href="/dashboard/coupon" className="block text-lg p-2 hover:bg-slate-100">
                         Coupons
+                    </Link>
+                }
+                {(isAdmin || isAgency) && 
+                    <Link href="/dashboard/manageViewer" className="block text-lg p-2 hover:bg-slate-100">
+                        Manage Viewer
                     </Link>
                 }
             </div>

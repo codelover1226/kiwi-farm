@@ -93,7 +93,7 @@ export function NavBar({backend}) {
                 <img src="./carticon.png" className="w-[35px]">
                 </img>
                 <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
-                  {items.length}
+                  {items?.length}
                 </div>
               </div>
             </div>
