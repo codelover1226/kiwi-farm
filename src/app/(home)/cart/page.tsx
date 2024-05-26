@@ -14,12 +14,18 @@ export default function About() {
   
   const user = useAppSelector(selectUser);
   const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
-  
+
+  let user_id1 = user.id;
+  if (Number(user_id1) === 12) {
+    user_id1 = 'all';
+  }
+
   useEffect(() => {
-    dispatch(getProducts({ type: "all", user: user.id }));
-  }, []);
+    dispatch(getProducts({ type: "all", user: user_id1 }));
+  }, [user.id]);
   
   const products: IProduct[] = useAppSelector(selectProducts);
+  console.log(products, "--->>>>>>>>>>>>>>>>>", user_id1);
   const subtotal = cartItems.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0);
   const router = useRouter();
   return (
@@ -40,6 +46,7 @@ export default function About() {
         </div>
         {cartItems.map((item: CartProduct, index: number) => {
           const product : IProduct = products.find(p => p.id === item.product_id);
+          console.log(products, "+++");
           return (
             <div key={index} className="w-full max-w-[1280px] sm:flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
               <div className="w-full flex text-left">

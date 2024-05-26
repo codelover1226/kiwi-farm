@@ -16,6 +16,7 @@ import { CustomSelect } from "@/components/ui/select"
 import { toast } from "react-hot-toast";
 import { selectUser } from "@/store/features/auth/authSlice";
 import {ICoupons} from "./../../(backend)/dashboard/coupon/page"
+import _ from 'lodash';
 
 import {
   Form,
@@ -26,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Item } from "@radix-ui/react-navigation-menu";
 
 const newCustomerSchema = z.object({
   name: z.string().min(1, { message: "name is required." }),
@@ -50,26 +52,50 @@ export default function About() {
   const products: IProduct[] = useAppSelector(selectProducts);
   const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
   const [couponVal, setCouponVal] = useState<ICoupons>(null)
-  const [deliveryInstruction, setDeliveryInstruction] = useState<string | null> ("")
+  const [subTotal, setSubTotal] = useState<Number>(0);
+  let tempSub: number = 0;
 
-  const router = useRouter();
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const product = products.find(p => p.id === item.product_id);
-    if (!product) return acc;
-    const price = Number(product.price);
-    if (isNaN(price)) return acc; 
-    return acc + (item.qty * price);
-  }, 0) *(1- (couponVal?.discount * 0.01 || 0));
+  
+
+  let checkoutProducts = [];
+  for (let i = 0; i < cartItems.length; i++) {
+    let cProduct = _.cloneDeep(products.find(p=> p.id === cartItems[i].product_id));
+    if (cProduct) {
+        cProduct.quantity = String(Number(cProduct.quantity) - Number(cartItems[i].qty));
+        for (let j = 0; j < cProduct.flavor.length; j++) {
+          if (cProduct.flavor[j].name === cartItems[i].flavor_name) {
+            cProduct.flavor[j].qty -= Number(cartItems[i].qty);
+          }
+        }
+        checkoutProducts.push(cProduct);
+    } else {
+        console.error(`Product with id ${cartItems[i].product_id} not found.`);
+    }
+  }
+
+  let user_id1 = user.id;
+  if (Number(user_id1) === 12) {
+    user_id1 = 'all';
+  }
 
   const updateProducts = () => {
-    dispatch(getProducts({type:"all", user: user.id}));
+    dispatch(getProducts({type:"all", user: user_id1}));
   }
+
   useEffect(() => {
     updateProducts();
-  }, [])
+    setSubTotal(cartItems.reduce((acc, item) => {
+      const product = products.find(p => p.id === item.product_id);
+      if (!product) return acc;
+      const price = Number(product.price);
+      if (isNaN(price)) return acc; 
+      return acc + (item.qty * price);
+    }, 0));
+  }, []);
+
   const form = useForm<z.infer<typeof newCustomerSchema>>({
     resolver: zodResolver(newCustomerSchema),
     defaultValues: {
@@ -83,8 +109,8 @@ export default function About() {
       deliveryInstruction: ""
     },
   });
+
   async function onSubmit(values: z.infer<typeof newCustomerSchema>) {
-    console.log("onSubmit");
     try {
       const formData = new FormData();
       for (const key in values) {
@@ -95,7 +121,8 @@ export default function About() {
       }
       formData.append("deliveryTiem", delivery_date)
       formData.append("cartItems" , JSON.stringify(cartItems))
-      formData.append("coupon_code", couponVal.code)
+      formData.append("coupon_code", couponVal.code),
+      formData.append("cProduct", JSON.stringify(checkoutProducts));
       setIsLoading(true);
       const response = await fetch("/api/products/checkout", {
         method: "POST",
@@ -105,11 +132,11 @@ export default function About() {
         updateProducts();
         localStorage.removeItem("cartItems")
         toast.success("You added the new product!.");
-        router.push('/thanks')
+        // router.push('/thanks')
       } else {
         const error = await response.json();
         toast.error(error);
-        console.error(error); 
+        
       }
     } catch (error) {
       toast.error(error.message);
@@ -127,24 +154,40 @@ export default function About() {
   async function applyCoupon (event:any){
     event.preventDefault(false)
     const formData = new FormData();
-    formData.append('code', couponCode)
+    formData.append('code', couponCode);
     try {
       const response = await fetch("/api/coupons/getbyname", {
         method: "POST",
         body: formData,
       });
       if(response.ok) {
+        tempSub = 0;
         const data = await response.json();
         const jsonData = JSON.parse(data)
-        setCouponVal(jsonData[0]) 
+        setCouponVal(jsonData[0])
+        for (let i = 0; i < cartItems.length; i++) {
+          const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
+          const disProduct = jsonData[0].product.find(p=> p.product === String(cartItems[i].product_id));
+          if (disProduct === undefined) {
+            tempSub += cartItems[i].qty * Number(product.price);
+          }else{
+            tempSub += (cartItems[i].qty * Number(product.price) * (100 - disProduct?.discount)) / 100;
+          }
+        }
+        setSubTotal(tempSub);
         toast.success("Coupon code has been successfully applied")
       }else{
         toast.error('Cannot find coupon');
         setCouponVal({
           id: "",
           code: "",
-          discount: 0
+          product: undefined
         })
+        for (let i = 0; i < cartItems.length; i++) {
+          const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
+          tempSub += cartItems[i].qty * Number(product.price);
+        }
+        setSubTotal(tempSub);
       }
     }
     catch(error){
@@ -476,7 +519,7 @@ export default function About() {
                     <Input
                       type="date"
                       value={delivery_date}
-                      onChange={(event:any) => {setDeliveryDate(event.target.value), console.log(delivery_date)}}
+                      onChange={(event:any) => {setDeliveryDate(event.target.value)}}
                       className="bg-white mt-0 w-[150px] mx-auto"
                     />
                   </div>
@@ -504,66 +547,71 @@ export default function About() {
                 <p className="w-full text-left">Price</p>
                 <p className="w-full text-left">Quantity</p>
                 <p className="w-full text-right">Total</p>
+                <p className="w-full text-right">Discount Total</p>
               </div>
             </div>
             {cartItems.map((item: CartProduct, index: number) => {
               const product : IProduct = products.find(p => p.id === item.product_id);
+              const disProduct = couponVal?.product?.find(p=> p.product === String(item.product_id));
               return (
-                <div key={index} className="w-full max-w-[1280px] flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
-                  <div className="w-full text-left sm:flex">
-                    <Image
-                      className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
-                      src={product.image}
-                      alt='grass'
-                      width={300}
-                      height={300}
-                    />
-                    <div className="w-full content-center">
-                      <p className="sm:ml-6 w-full text-left content-center">
-                        {product.title}
-                      </p>  
-                      <p className="sm:ml-6 w-full text-left content-center">
-                        <span className="font-bold">Flavor</span> : {item.flavor_name}
-                      </p>
+                <div>
+                  <div key={index} className="w-full max-w-[1280px] flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
+                    <div className="w-full text-left sm:flex">
+                      <Image
+                        className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
+                        src={product?.image}
+                        alt='grass'
+                        width={300}
+                        height={300}
+                      />
+                      <div className="w-full content-center">
+                        <p className="sm:ml-6 w-full text-left content-center">
+                          {product?.title}
+                        </p>  
+                        <p className="sm:ml-6 w-full text-left content-center">
+                          <span className="font-bold">Flavor</span> : {item.flavor_name}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full sm:flex content-center">
-                    <p className="w-full text-center sm:text-left content-center">$ {product? product.price : 'N/A'}</p>
-                    <p className="w-full text-center sm:text-left content-center">{item.qty}</p>
-                    <p className="w-full text-center sm:text-right content-center">$ {item.qty * Number(product.price)}</p>
+                    <div className="w-full sm:flex content-center">
+                      <p className="w-full text-center sm:text-left content-center">$ {product? product.price : 'N/A'}</p>
+                      <p className="w-full text-center sm:text-left content-center">{item.qty}</p>
+                      <p className="w-full text-center sm:text-right content-center">$ {item.qty * Number(product?.price)}</p>
+                      <p className="w-full text-center sm:text-right content-center">$ {disProduct === undefined ? item.qty * Number(product?.price) : (item.qty * Number(product?.price) * (100 - disProduct?.discount)) / 100}</p>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="w-full mx-auto max-w-[1280]  float-right">
-            <div className="w-full flex items-center justify-center lg:justify-end">
-              
-              <div className="mt-3">
-                {
-                  !couponVal?.code?
-                  <>
-                  </>
-                  :
-                  <>
-                    <div className="flex space-x-2">
-                      <p className="text-[14px] font-semibold">Subtotal : </p>
-                      <p className="text-[14px]"> ${(subtotal*100/(100-couponVal.discount)).toFixed(2)}</p>
+                  <div className="w-full mx-auto max-w-[1280]  float-right">
+                    <div className="w-full flex items-center justify-center lg:justify-end">
+                      
+                      <div className="mt-3">
+                        {
+                          !couponVal?.code?
+                          <>
+                          </>
+                          :
+                          <>
+                            {/* <div className="flex space-x-2">
+                              <p className="text-[14px] font-semibold">Subtotal : </p>
+                              <p className="text-[14px]"> ${(subtotal*100/(100-couponVal.discount)).toFixed(2)}</p>
+                            </div>
+                            <div className="flex space-x-2">
+                              <p className="text-[14px] font-semibold">Discount : </p>
+                              <p className="text-[14px]"> ${couponVal.discount} % off (-${(subtotal*(couponVal.discount)/(100-couponVal.discount)).toFixed(2)})</p>
+                            </div> */}
+                          </>
+                        }
+                        <div className="flex space-x-2 mt-6">
+                          <p className="text-[14px] font-semibold">Total : </p>
+                          <p className="text-[14px]"> $ {Number(subTotal).toFixed(2)}</p>
+                        </div>
+                        
+                      </div>
                     </div>
-                    <div className="flex space-x-2">
-                      <p className="text-[14px] font-semibold">Discount : </p>
-                      <p className="text-[14px]"> ${couponVal.discount} % off (-${(subtotal*(couponVal.discount)/(100-couponVal.discount)).toFixed(2)})</p>
-                    </div>
-                  </>
-                }
-                <div className="flex space-x-2 mt-6">
-                  <p className="text-[14px] font-semibold">Total : </p>
-                  <p className="text-[14px]"> $ {subtotal.toFixed(2)}</p>
-                </div>
-                
-              </div>
-            </div>
-          </div>
+                  </div>
         </div>
       </div>
     </main>

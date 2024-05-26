@@ -1,12 +1,20 @@
-'use client';
-import React, {useEffect, useState, useMemo} from 'react';
+'use client'
+import { useState } from "react";
+import React, { useEffect } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import 'react-quill/dist/quill.snow.css'
-import dynamic from 'next/dynamic';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import _ from 'lodash';
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+  getAgents,
+  selectAgents
+} from "@/store/features/agents/agentsSlice";
 const HtmlToReactParser = require('html-to-react').Parser;
-const htmlToReactParser = new HtmlToReactParser();
 const HtmlToReact = require('html-to-react');
+import {
+  selectUser
+} from "@/store/features/auth/authSlice";
+const htmlToReactParser = new HtmlToReactParser();
 const processNodeDefinitions = new HtmlToReact.ProcessNodeDefinitions();
 
 const processingInstructions = [
@@ -58,21 +66,25 @@ const processingInstructions = [
   },
 ];
 
-export default function Test() {
-    const [convertedText, setConvertedText] = useState("Some default content");
+export default function Home() {
+  const dispatch = useAppDispatch();
+  const agents = useAppSelector(selectAgents);
+  const user = useAppSelector(selectUser);
+  const [convertedText, setConvertedText] = useState("");
+  const reactElement = htmlToReactParser.parseWithInstructions(convertedText, ()=>true, processingInstructions);
 
-    const reactElement = htmlToReactParser.parseWithInstructions(convertedText, ()=>true, processingInstructions);
-    return (
-      <main>
-        <div>
-          <ReactQuill
-            theme='snow'
-            value={convertedText}
-            onChange={setConvertedText}
-            style={{minHeight: '300px'}}
-          />
-          {reactElement}
-        </div>
-      </main>
-    );
+  useEffect(() => {
+    dispatch(getAgents(true));
+    setConvertedText((agents.find(p=> p.title === user.title))?.menuList);
+  }, []);
+
+  return (
+    <main className="flex min-h-screen flex-col items-center">
+      
+      <div className="mt-16 flex xs:px-5 md:px-10 mx-10 xs:min-w-full md:min-w-[600px] max-w-[600px] min-h-screen justify-left text-left rounded-sm py-16 flex-col border-2 mb-24 border-gray-500">
+        {reactElement}
+      </div>
+
+    </main>
+  );
 }

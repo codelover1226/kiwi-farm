@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useReducer, useState, useEffect } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 import {
   Card,
@@ -19,7 +18,8 @@ import {
   login,
   setUser,
   setIsAdmin,
-  setIsVisitor,  
+  setIsVisitor, 
+  setIsAgency 
 } from "@/store/features/auth/authSlice";
 import { setSelectedProduct } from '@/store/features/products/productsSlice';
 
@@ -50,13 +50,10 @@ const PasswordPromptDialog = () => {
         console.error(res)
       } else {
         const user = res;
-        console.log("user");
-        console.log(user);
-        // console.log(password);
-        // console.log(password != user.password);
         dispatch(login());
         dispatch(setUser(user));
-        dispatch(setIsVisitor(password != user.password));
+        dispatch(setIsVisitor(password === user.password1));
+        dispatch(setIsAgency(password === user.password));
         dispatch(setIsAdmin(user.content.isAdmin));
         dispatch(setSelectedProduct("-1"));
       };

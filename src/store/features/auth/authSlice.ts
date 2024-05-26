@@ -15,7 +15,9 @@ export interface AuthSliceState {
     username: string;
     isAdmin: boolean;
     isVisitor: boolean;
+    isAgency: boolean;
     isLogin: boolean;
+    isNothing: boolean;
     user: User;
 }
 
@@ -23,7 +25,9 @@ const initialState: AuthSliceState = {
     username : "",
     isAdmin  : false,
     isVisitor  : false,
+    isAgency  : false,
     isLogin  : false,
+    isNothing: false,
     user: {
       id: "",
       title: "",
@@ -60,11 +64,22 @@ export const authSlice = createAppSlice({
     setIsVisitor: create.reducer(
       (state, action: PayloadAction<boolean>) => {
           state.isVisitor = action.payload;
+          state.isNothing = action.payload;
+      },
+    ),
+    setIsAgency: create.reducer(
+      (state, action: PayloadAction<boolean>) => {
+          state.isAgency = action.payload;
       },
     ),
     setUser: create.reducer(
       (state, action: PayloadAction<User>) => {
           state.user = action.payload;
+      },
+    ),
+    setNothing: create.reducer(
+      (state, action: PayloadAction<boolean>) => {
+          state.isNothing = action.payload;
       },
     ),
   }),
@@ -75,24 +90,12 @@ export const authSlice = createAppSlice({
     selectIslogin: (auth) => auth.isLogin,
     selectUser: (auth) => auth.user,
     selectIsVisitor: (auth) => auth.isVisitor,
+    selectIsAgency: (auth) => auth.isAgency,
+    selectIsNothing: (auth) => auth.isNothing,
   },
 });
 
-// Action creators are generated for each case reducer function.
-export const { login, logout, setIsAdmin, setUsername, setUser, setIsVisitor } =
+export const { login, logout, setIsAdmin, setUsername, setUser, setIsVisitor, setIsAgency, setNothing } =
   authSlice.actions;
 
-// Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectUsername, selectIsAdmin, selectIslogin, selectUser, selectIsVisitor } = authSlice.selectors;
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
-// export const incrementIfOdd =
-//   (amount: number): AppThunk =>
-//   (dispatch, getState) => {
-//     const currentValue = selectCount(getState());
-
-//     if (currentValue % 2 === 1 || currentValue % 2 === -1) {
-//       dispatch(incrementByAmount(amount));
-//     }
-//   };
+export const { selectUsername, selectIsAdmin, selectIslogin, selectUser, selectIsVisitor, selectIsAgency, selectIsNothing } = authSlice.selectors;

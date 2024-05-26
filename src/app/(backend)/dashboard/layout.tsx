@@ -23,7 +23,6 @@ export default function DashboardLayout({
             setBar("bar")
             setIsActiveSideBar(false)
         }
-        // ref.current.log();
     }
     const onMenuClick = () => {
       setBar("bar")
