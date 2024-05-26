@@ -33,6 +33,7 @@ export interface ICoupons {
   id: string;
   code: string;
   product: Array<{product: string, discount: number}>;
+  discount: number;
 }
 
 interface SelectDemoProps {
