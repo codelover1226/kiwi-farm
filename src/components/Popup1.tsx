@@ -51,6 +51,7 @@ export default function Popup1() {
         console.error(res)
       } else {
         const user = res;
+        console.log(user, password);
         dispatch(setUser(user));
         dispatch(setIsVisitor(password === user.password1));
         dispatch(setIsAgency(password === user.password));
@@ -73,6 +74,18 @@ export default function Popup1() {
   const alertCancel1 = () => {
     setIsOpen(false);
     dispatch(setNothing(true));
+    dispatch(setUser({
+      id: "12",
+      title: "",
+      password: "super",
+      password1: "12",
+      slug: "",
+      description: ""
+    }));
+    dispatch(setIsVisitor(false));
+    dispatch(setIsAgency(false));
+    dispatch(setIsAdmin(false));
+    dispatch(setSelectedProduct("-1"));
   };
 
   const [isOpen, setIsOpen] = useState(true);
