@@ -71,7 +71,7 @@ export default function Home() {
   const agents = useAppSelector(selectAgents);
   const user = useAppSelector(selectUser);
   const convertedText = useMemo(()=> {
-    return (agents.find(p=> p.title === user.title))?.menuList;    
+    return (agents.find(p=> p.id === user.id))?.menuList;    
   }, [agents])
   const reactElement = htmlToReactParser.parseWithInstructions(convertedText, ()=>true, processingInstructions);
 

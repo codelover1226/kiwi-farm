@@ -51,12 +51,20 @@ export default function Popup1() {
         console.error(res)
       } else {
         const user = res;
-        dispatch(setUser(user));
+        console.log(user, password);
+        dispatch(setUser({
+          id: user.id,
+          title: "",
+          password: "",
+          password1: "",
+          slug: "",
+          description: "",
+          menuList: user.menuList
+        }));
         dispatch(setIsVisitor(password === user.password1));
         dispatch(setIsAgency(password === user.password));
         dispatch(setIsAdmin(user.content.isAdmin));
         dispatch(setSelectedProduct("-1"));
-        dispatch(login());
         toast.success("Welcome");
         setIsOpen(false);
         if (password === user.password1) {
@@ -73,6 +81,19 @@ export default function Popup1() {
   const alertCancel1 = () => {
     setIsOpen(false);
     dispatch(setNothing(true));
+    dispatch(setUser({
+      id: "12",
+      title: "",
+      password: "",
+      password1: "",
+      slug: "",
+      description: "",
+      menuList: "",
+    }));
+    dispatch(setIsVisitor(false));
+    dispatch(setIsAgency(false));
+    dispatch(setIsAdmin(false));
+    dispatch(setSelectedProduct("-1"));
   };
 
   const [isOpen, setIsOpen] = useState(true);
