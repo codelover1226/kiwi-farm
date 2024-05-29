@@ -52,12 +52,19 @@ export default function Popup1() {
       } else {
         const user = res;
         console.log(user, password);
-        dispatch(setUser(user));
+        dispatch(setUser({
+          id: user.id,
+          title: "",
+          password: "",
+          password1: "",
+          slug: "",
+          description: "",
+          menuList: user.menuList
+        }));
         dispatch(setIsVisitor(password === user.password1));
         dispatch(setIsAgency(password === user.password));
         dispatch(setIsAdmin(user.content.isAdmin));
         dispatch(setSelectedProduct("-1"));
-        dispatch(login());
         toast.success("Welcome");
         setIsOpen(false);
         if (password === user.password1) {
@@ -77,10 +84,11 @@ export default function Popup1() {
     dispatch(setUser({
       id: "12",
       title: "",
-      password: "super",
-      password1: "12",
+      password: "",
+      password1: "",
       slug: "",
-      description: ""
+      description: "",
+      menuList: "",
     }));
     dispatch(setIsVisitor(false));
     dispatch(setIsAgency(false));

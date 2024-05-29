@@ -10,6 +10,7 @@ interface User {
   password1: string;
   slug: string;
   description: string;
+  menuList: string;
 }
 export interface AuthSliceState {
     username: string;
