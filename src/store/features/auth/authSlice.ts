@@ -36,6 +36,7 @@ const initialState: AuthSliceState = {
       password1: "",
       slug: "",
       description: "",
+      menuList: "",
     },
 };
 
