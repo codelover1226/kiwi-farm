@@ -19,7 +19,7 @@ import { IProduct } from '@/store/features/products/productsAPI';
 import { Input } from './ui/input';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectUser } from '@/store/features/auth/authSlice';
-import { selectIsNothing, selectIsVisitor, selectIsAdmin, selectIsAgency } from "@/store/features/auth/authSlice";
+import { selectIsNothing, selectIsVisitor, selectIsAdmin, selectIsAgency, selectIsCart } from "@/store/features/auth/authSlice";
 import { toast } from "react-hot-toast";
 
 import './user.css'
@@ -39,6 +39,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
   const isNothing = useAppSelector(selectIsNothing);
   const isAdmin = useAppSelector(selectIsAdmin);
   const isAgency = useAppSelector(selectIsAgency);
+  const isCart = useAppSelector(selectIsCart);
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -76,7 +77,6 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     window.dispatchEvent(new Event("storage"));
     toast.success("You just added an item successfully")
   }
-  console.log(isAgency, isAdmin, isNothing, "--->>>");
 
   return (
     <div>
@@ -96,7 +96,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
           </CardHeader>
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
-                {(!isNothing || !isVisitor) && <div className=''>
+                {(isAgency || isAdmin || isCart) && <div className=''>
                   <pre>price    : ${product.price}</pre>
                 </div>}
                 <div className='text-lg font-normal '>
@@ -107,7 +107,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
         </Card>
       </DialogTrigger>
       
-      {(isAgency || isAdmin) && <div className='w-full content-center text-center flex-row mt-6'>
+      {(isAgency || isAdmin || isCart) && <div className='w-full content-center text-center flex-row mt-6'>
         <div className='w-[280px] mx-auto flex'>
           <p className='content-center mr-[10px]'>
             Flavor :

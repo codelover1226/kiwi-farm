@@ -19,14 +19,17 @@ import {
   setUser,
   setIsAdmin,
   setIsVisitor, 
-  setIsAgency 
+  setIsAgency,
+  setCart
 } from "@/store/features/auth/authSlice";
 import { setSelectedProduct } from '@/store/features/products/productsSlice';
+import { useRouter } from 'next/navigation';
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 const PasswordPromptDialog = () => {
   const dispatch = useAppDispatch();
+  const { push } = useRouter();
 
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,9 +53,23 @@ const PasswordPromptDialog = () => {
         console.error(res)
       } else {
         const user = res;
+        if (password === user.password1) {
+          dispatch(setUser({
+            id: "12",
+            title: "",
+            password: "",
+            password1: "",
+            slug: "",
+            description: "",
+            menuList: "",
+          }));
+          dispatch(setIsVisitor(password === user.password1));
+          dispatch(setCart(true));
+          push('/');
+          return;
+        }
         dispatch(login());
         dispatch(setUser(user));
-        dispatch(setIsVisitor(password === user.password1));
         dispatch(setIsAgency(password === user.password));
         dispatch(setIsAdmin(user.content.isAdmin));
         dispatch(setSelectedProduct("-1"));

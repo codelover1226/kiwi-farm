@@ -7,24 +7,23 @@ import MobileNavBar from "@/components/MobileNavBar";
 import { useRouter } from "next/navigation";
 import {
   logout,
-  selectIsAdmin,
 } from "@/store/features/auth/authSlice";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectUser } from "@/store/features/auth/authSlice";
+import { selectUser, selectIsAdmin, selectIsAgency, selectIsCart } from "@/store/features/auth/authSlice";
 import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
 import { IProduct } from "@/store/features/products/productsAPI";
 export function NavBar({backend}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const isAdministrator = useAppSelector(selectIsAdmin);
+  const isAgency = useAppSelector(selectIsAgency);
+  const isCart = useAppSelector(selectIsCart);
   const [items, setItems] = useState([]);
   const handleLogout = () => {
     router.push("/");
     dispatch(logout());
   }
-
-  const products: IProduct[] = useAppSelector(selectProducts);
   
   const user = useAppSelector(selectUser);
   useEffect(()=>{
@@ -85,18 +84,20 @@ export function NavBar({backend}) {
               <MobileNavBar />
             </div>
             }
-            <div className="content-center" onClick={()=>{
-              localStorage.setItem('notification', 'false')
-              router.push('/cart')
-            }}>
-              <div className={`content-center relative cursor-pointer flex font-bold duration-200 w-[40px] `}>
-                <img src="./carticon.png" className="w-[35px]">
-                </img>
-                <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
-                  {items?.length}
+            {(isAgency || isAdministrator || isCart) && 
+              <div className="content-center" onClick={()=>{
+                localStorage.setItem('notification', 'false')
+                router.push('/cart')
+              }}>
+                <div className={`content-center relative cursor-pointer flex font-bold duration-200 w-[40px] `}>
+                  <img src="./carticon.png" className="w-[35px]">
+                  </img>
+                  <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
+                    {items?.length}
+                  </div>
                 </div>
               </div>
-            </div>
+            }
           </div>
         </div>
       </div>
