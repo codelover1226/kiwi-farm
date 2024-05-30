@@ -1,6 +1,7 @@
 import { createAppSlice } from "@/store/createAppSlice";
 import type { AppThunk } from "@/store/store";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { BlobOptions } from "buffer";
 import { JsonObject } from "type-fest";
 
 interface User {
@@ -19,6 +20,7 @@ export interface AuthSliceState {
     isAgency: boolean;
     isLogin: boolean;
     isNothing: boolean;
+    isCart: boolean;
     user: User;
 }
 
@@ -29,6 +31,7 @@ const initialState: AuthSliceState = {
     isAgency  : false,
     isLogin  : false,
     isNothing: false,
+    isCart: false,
     user: {
       id: "",
       title: "",
@@ -84,6 +87,11 @@ export const authSlice = createAppSlice({
           state.isNothing = action.payload;
       },
     ),
+    setCart: create.reducer(
+      (state, action: PayloadAction<boolean>) => {
+          state.isCart = action.payload;
+      },
+    ),
   }),
   
   selectors: {
@@ -94,10 +102,11 @@ export const authSlice = createAppSlice({
     selectIsVisitor: (auth) => auth.isVisitor,
     selectIsAgency: (auth) => auth.isAgency,
     selectIsNothing: (auth) => auth.isNothing,
+    selectIsCart: (auth) => auth.isCart,
   },
 });
 
-export const { login, logout, setIsAdmin, setUsername, setUser, setIsVisitor, setIsAgency, setNothing } =
+export const { login, logout, setIsAdmin, setUsername, setUser, setIsVisitor, setIsAgency, setNothing, setCart } =
   authSlice.actions;
 
-export const { selectUsername, selectIsAdmin, selectIslogin, selectUser, selectIsVisitor, selectIsAgency, selectIsNothing } = authSlice.selectors;
+export const { selectUsername, selectIsAdmin, selectIslogin, selectUser, selectIsVisitor, selectIsAgency, selectIsNothing, selectIsCart } = authSlice.selectors;
