@@ -16,7 +16,8 @@ import {
   setIsAdmin,
   setIsVisitor, 
   setIsAgency,
-  setNothing
+  setNothing,
+  setCart
 } from "@/store/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Input } from "@/components/ui/input";
@@ -51,7 +52,6 @@ export default function Popup1() {
         console.error(res)
       } else {
         const user = res;
-        console.log(user, password);
         dispatch(setUser({
           id: user.id,
           title: "",
@@ -61,13 +61,27 @@ export default function Popup1() {
           description: "",
           menuList: user.menuList
         }));
-        dispatch(setIsVisitor(password === user.password1));
-        dispatch(setIsAgency(password === user.password));
-        dispatch(setIsAdmin(user.content.isAdmin));
         dispatch(setSelectedProduct("-1"));
         toast.success("Welcome");
         setIsOpen(false);
+        if (password === user.password) {
+          dispatch(login());
+          dispatch(setIsAgency(password === user.password));
+          dispatch(setIsAdmin(user.content.isAdmin));
+          push('/dashboard');
+        }
         if (password === user.password1) {
+          dispatch(setUser({
+            id: "12",
+            title: "",
+            password: "",
+            password1: "",
+            slug: "",
+            description: "",
+            menuList: "",
+          }));
+          dispatch(setIsVisitor(password === user.password1));
+          dispatch(setCart(true));
           push('/menulist');
         }
       };
