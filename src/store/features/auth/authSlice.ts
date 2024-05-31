@@ -54,6 +54,11 @@ export const authSlice = createAppSlice({
     }), 
     logout: create.reducer((state) => {
       state.isLogin = false;
+      state.isNothing = false;
+      state.isVisitor = false;
+      state.isAgency = false;
+      state.isAdmin = false;
+      state.isCart = false;
     }),
     // Use the `PayloadAction` type to declare the contents of `action.payload`
     setUsername: create.reducer(
@@ -69,7 +74,7 @@ export const authSlice = createAppSlice({
     setIsVisitor: create.reducer(
       (state, action: PayloadAction<boolean>) => {
           state.isVisitor = action.payload;
-          state.isNothing = action.payload;
+          state.isNothing = false;
       },
     ),
     setIsAgency: create.reducer(

@@ -66,7 +66,6 @@ export function NavBar({backend}) {
           </div>
           <div className="flex">
             
-            
             {backend?
             <>
               <h2 className="text-3xl self-center hidden sm:block text-black text-center ">

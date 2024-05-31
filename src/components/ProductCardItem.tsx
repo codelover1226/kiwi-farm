@@ -107,62 +107,64 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
         </Card>
       </DialogTrigger>
       
-      {(isAgency || isAdmin || isCart) && <div className='w-full content-center text-center flex-row mt-6'>
-        <div className='w-[280px] mx-auto flex'>
-          <p className='content-center mr-[10px]'>
-            Flavor :
-          </p>
-          <div className='w-[150px]'>
-            <select 
-              className='mx-0 w-full bg-white text-sm py-2 my-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md' 
-              value={selectedOption} 
-              onChange={handleChange}
-              >
-              <option value="">Flavor</option>
-              {product.flavor && product.flavor.map((item, index) => (
-                <option key={index} value={index}>{item.name}</option>
-              ))}
-            </select>
-        </div>
-        
-        </div>
-        <div className='text-lg flex space-x-2 justify-center place-items-center'>
-          
-          <div className='flex space-x-3 mx-3'>
-            <button 
-              className='bg-green-400 p-0 px-[10px] text-lg font-normal hover:bg-green-600 transition-colors duration-700'
-              onClick={() => {
-                if(qty > 1) setQty(qty - 1.0);
-              }}
-              >
-              -
-            </button>
-            <Input
-              className='w-[150px]'
-              placeholder='Qty'
-              type='number'
-              min={0}
-              max={maxQty}
-              value={qty}
-              onChange={onChange}
-            >
-            </Input>
-            <button 
-              className='bg-green-400 p-0 px-2 text-lg font-normal hover:bg-green-600 transition-colors duration-700'
-              onClick={() => {
-                if(qty < maxQty) setQty(qty + 1.0);
-            }}>
-              +
-            </button>
+      {(isAgency || isAdmin || isCart) && 
+        <div className='w-full content-center text-center flex-row mt-6'>
+          <div className='w-[280px] mx-auto flex'>
+            <p className='content-center mr-[10px]'>
+              Flavor :
+            </p>
+            <div className='w-[150px]'>
+              <select 
+                className='mx-0 w-full bg-white text-sm py-2 my-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md' 
+                value={selectedOption} 
+                onChange={handleChange}
+                >
+                <option value="">Flavor</option>
+                {product.flavor && product.flavor.map((item, index) => (
+                  <option key={index} value={index}>{item.name}</option>
+                ))}
+              </select>
           </div>
+          
+          </div>
+          <div className='text-lg flex space-x-2 justify-center place-items-center'>
+            
+            <div className='flex space-x-3 mx-3'>
+              <button 
+                className='bg-green-400 p-0 px-[10px] text-lg font-normal hover:bg-green-600 transition-colors duration-700'
+                onClick={() => {
+                  if(qty > 1) setQty(qty - 1.0);
+                }}
+                >
+                -
+              </button>
+              <Input
+                className='w-[150px]'
+                placeholder='Qty'
+                type='number'
+                min={0}
+                max={maxQty}
+                value={qty}
+                onChange={onChange}
+              >
+              </Input>
+              <button 
+                className='bg-green-400 p-0 px-2 text-lg font-normal hover:bg-green-600 transition-colors duration-700'
+                onClick={() => {
+                  if(qty < maxQty) setQty(qty + 1.0);
+              }}>
+                +
+              </button>
+            </div>
+          </div>
+          <button 
+            className='w-[150px] bg-green-400 mt-6 p-4 text-lg font-normal hover:bg-green-600 transition-colors duration-700'
+            onClick={addToCart}
+          >
+            Add to cart
+          </button>
         </div>
-        <button 
-          className='w-[150px] bg-green-400 mt-6 p-4 text-lg font-normal hover:bg-green-600 transition-colors duration-700'
-          onClick={addToCart}
-        >
-          Add to cart
-        </button>
-      </div>}
+      }
       <DialogContent className='' style={{scrollbarWidth:"none"}}>
         <DialogHeader>
           <DialogTitle className='text-center'>{product.title}</DialogTitle>
