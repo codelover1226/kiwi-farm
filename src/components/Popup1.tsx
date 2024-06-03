@@ -78,7 +78,7 @@ export default function Popup1() {
             password1: "",
             slug: "",
             description: "",
-            menuList: "",
+            menuList: user.menuList,
           }));
           dispatch(setIsVisitor(password === user.password1));
           dispatch(setCart(true));

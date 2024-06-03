@@ -71,8 +71,9 @@ export default function Home() {
   const agents = useAppSelector(selectAgents);
   const user = useAppSelector(selectUser);
   const convertedText = useMemo(()=> {
-    return (agents.find(p=> p.id === user.id))?.menuList;    
-  }, [agents])
+    return user?.menuList;    
+  }, [user])
+
   const reactElement = htmlToReactParser.parseWithInstructions(convertedText, ()=>true, processingInstructions);
 
   useEffect(() => {

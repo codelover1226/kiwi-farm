@@ -53,6 +53,23 @@ const PasswordPromptDialog = () => {
         console.error(res)
       } else {
         const user = res;
+        dispatch(setUser({
+          id: user.id,
+          title: "",
+          password: "",
+          password1: "",
+          slug: "",
+          description: "",
+          menuList: user.menuList
+        }));
+        dispatch(setSelectedProduct("-1"));
+        toast.success("Welcome");
+        if (password === user.password) {
+          dispatch(login());
+          dispatch(setIsAgency(password === user.password));
+          dispatch(setIsAdmin(user.content.isAdmin));
+          push('/dashboard');
+        }
         if (password === user.password1) {
           dispatch(setUser({
             id: "12",
@@ -61,18 +78,12 @@ const PasswordPromptDialog = () => {
             password1: "",
             slug: "",
             description: "",
-            menuList: "",
+            menuList: user.menuList,
           }));
           dispatch(setIsVisitor(password === user.password1));
           dispatch(setCart(true));
-          push('/');
-          return;
+          push('/menulist');
         }
-        dispatch(login());
-        dispatch(setUser(user));
-        dispatch(setIsAgency(password === user.password));
-        dispatch(setIsAdmin(user.content.isAdmin));
-        dispatch(setSelectedProduct("-1"));
       };
     } catch (error) {
       console.error(error);
