@@ -6,15 +6,13 @@ export async function POST(req : Request) {
   try {
     const formData = await req.formData();
     const code = formData.get("code");
-    let temp = [];
-    const product = JSON.parse(String(formData.get("product")));
-    temp.push(product);
+    const discount = formData.get("discount");
     try {
       const {data, error} = await supabase
        .from('coupons')
        .insert({
           code,
-          product: temp
+          discount: discount
         });
 
       if (error) {

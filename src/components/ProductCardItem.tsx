@@ -23,9 +23,12 @@ import { selectIsNothing, selectIsVisitor, selectIsAdmin, selectIsAgency, select
 import { toast } from "react-hot-toast";
 
 import './user.css'
+import { Json } from '@/supabase/types/test';
 export interface CartProduct {
   product_id: string,
   flavor_name: string,
+  s_price: number,
+  s_qty: number,
   qty: number
 }
 
@@ -68,6 +71,8 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     const newCartItem : CartProduct = {
       product_id: product.id,
       flavor_name : product.flavor[selectedOption].name,
+      s_price: product.s_coupon.price,
+      s_qty: product.s_coupon.qty,
       qty: qty
     }
 

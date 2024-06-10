@@ -90,7 +90,12 @@ export default function About() {
     setSubTotal(cartItems.reduce((acc, item) => {
       const product = products.find(p => p.id === item.product_id);
       if (!product) return acc;
-      const price = Number(product.price);
+      let price = 0;
+      if (item.s_qty < item.qty) {
+        price = Number(item.s_price);
+      }else{
+        price = Number(product.price);
+      }
       if (isNaN(price)) return acc; 
       return acc + (item.qty * price);
     }, 0));
@@ -152,7 +157,7 @@ export default function About() {
     setCouponField(!couponField)
   }
   async function applyCoupon (event:any){
-    event.preventDefault(false)
+    event.preventDefault(false);
     const formData = new FormData();
     formData.append('code', couponCode);
     try {
@@ -163,15 +168,22 @@ export default function About() {
       if(response.ok) {
         tempSub = 0;
         const data = await response.json();
-        const jsonData = JSON.parse(data)
-        setCouponVal(jsonData[0])
+        const jsonData = JSON.parse(data);
+        setCouponVal(jsonData[0]);
         for (let i = 0; i < cartItems.length; i++) {
           const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
-          const disProduct = jsonData[0].product.find(p=> p.product === String(cartItems[i].product_id));
-          if (disProduct === undefined) {
-            tempSub += cartItems[i].qty * Number(product.price);
+          if (jsonData[0].discount === undefined) {
+            if (cartItems[i].qty > cartItems[i].s_qty) {
+              tempSub += cartItems[i].qty * Number(cartItems[i].s_price);
+            }else{
+              tempSub += cartItems[i].qty * Number(product.price);
+            }
           }else{
-            tempSub += (cartItems[i].qty * Number(product.price) * (100 - disProduct?.discount)) / 100;
+            if (cartItems[i].qty > cartItems[i].s_qty) {
+              tempSub += (cartItems[i].qty * Number(cartItems[i].s_price) * (100 - jsonData[0].discount)) / 100;
+            }else{
+              tempSub += (cartItems[i].qty * Number(product.price) * (100 - jsonData[0].discount)) / 100;
+            }
           }
         }
         setSubTotal(tempSub);
@@ -574,11 +586,30 @@ export default function About() {
                         </p>
                       </div>
                     </div>
-                    <div className="w-full sm:flex content-center">
-                      <p className="w-full text-center sm:text-left content-center">$ {product? product.price : 'N/A'}</p>
-                      <p className="w-full text-center sm:text-left content-center">{item.qty}</p>
-                      <p className="w-full text-center sm:text-right content-center">$ {item.qty * Number(product?.price)}</p>
-                      <p className="w-full text-center sm:text-right content-center">$ {disProduct === undefined ? item.qty * Number(product?.price) : (item.qty * Number(product?.price) * (100 - disProduct?.discount)) / 100}</p>
+                    <div className="w-full flex content-center mt-6 sm:mt-0">
+                      {item.qty > item.s_qty ?
+                        couponVal?.code ?
+                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? product.price : 'N/A'}</p><p className="text-red-700">: ${item.s_price * (100 - couponVal?.discount) / 100}</p></p>
+                          :
+                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? product.price : 'N/A'}</p><p className="text-red-700">: ${item.s_price}</p></p>
+                        :
+                        couponVal?.code ?
+                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(product.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(product.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></p>
+                        :
+                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                      }
+                      <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
+                      {item.qty > item.s_qty ?
+                        couponVal?.code ?
+                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></p>
+                          :
+                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></p>
+                        :
+                        couponVal?.code ?
+                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(product?.price) * (100 - couponVal?.discount) / 100}</p></p>
+                          :
+                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(product?.price)}</p>
+                      }
                     </div>
                   </div>
                 </div>
@@ -590,24 +621,17 @@ export default function About() {
                       
                       <div className="mt-3">
                         {
-                          !couponVal?.code?
+                          couponVal?.code &&
                           <>
-                          </>
-                          :
-                          <>
-                            {/* <div className="flex space-x-2">
-                              <p className="text-[14px] font-semibold">Subtotal : </p>
-                              <p className="text-[14px]"> ${(subtotal*100/(100-couponVal.discount)).toFixed(2)}</p>
-                            </div>
                             <div className="flex space-x-2">
                               <p className="text-[14px] font-semibold">Discount : </p>
-                              <p className="text-[14px]"> ${couponVal.discount} % off (-${(subtotal*(couponVal.discount)/(100-couponVal.discount)).toFixed(2)})</p>
-                            </div> */}
+                              <p className="text-[14px]"> ${couponVal?.discount} % off (-${(Number(subTotal)*(couponVal?.discount)/(100-couponVal?.discount)).toFixed(2)})</p>
+                            </div>
                           </>
                         }
                         <div className="flex space-x-2 mt-6">
                           <p className="text-[14px] font-semibold">Total : </p>
-                          <p className="text-[14px]"> $ {Number(subTotal).toFixed(2)}</p>
+                          <p className="text-[14px] text-red-700"> ${Number(subTotal).toFixed(2)}</p>
                         </div>
                         
                       </div>

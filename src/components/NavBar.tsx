@@ -40,7 +40,6 @@ export function NavBar({backend}) {
   useEffect(() => {
     setItems(JSON.parse(localStorage.getItem('cartItems')));
   }, []);
-  console.log(items)
   return (
     <>
       {backend?

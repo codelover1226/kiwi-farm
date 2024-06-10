@@ -56,14 +56,19 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
                 {isVisitor?
                 <></>
                 :
-                    <Link href="/dashboard/coupon" className="block text-lg p-2 hover:bg-slate-100">
-                        Coupons
+                    <Link href="/dashboard/normalCoupon" className="block text-lg p-2 hover:bg-slate-100">
+                        Normal Coupons
                     </Link>
                 }
                 {(isAdmin || isAgency) && 
-                    <Link href="/dashboard/manageViewer" className="block text-lg p-2 hover:bg-slate-100">
-                        Manage Viewer
-                    </Link>
+                    <>
+                        <Link href="/dashboard/specialCoupon" className="block text-lg p-2 hover:bg-slate-100">
+                            Special Coupons
+                        </Link>
+                        <Link href="/dashboard/manageViewer" className="block text-lg p-2 hover:bg-slate-100">
+                            Manage Viewer
+                        </Link>
+                    </>
                 }
             </div>
             <div className={className3 + " absolute transition-opacity top-0 w-[100vw] h-full bg-black z-0 bg-opacity-30 sm:hidden block"}>

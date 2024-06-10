@@ -14,18 +14,14 @@ export const StoreProvider = ({ children }: Props) => {
   const storeRef = useRef<AppStore | null>(null);
 
   if (!storeRef.current) {
-    // Load state from local storage if available, or create a new store instance
     const persistedState = loadState();
     storeRef.current = makeStore(persistedState);
   }
 
   useEffect(() => {
     if (storeRef.current != null) {
-      // Configure listeners using the provided defaults
-      // Optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
       const unsubscribe = setupListeners(storeRef.current.dispatch);
       
-      // Save state to local storage whenever the store updates
       const saveStateToLocalStorage = () => {
         saveState(storeRef.current?.getState());
       };
@@ -41,7 +37,6 @@ export const StoreProvider = ({ children }: Props) => {
   return <Provider store={storeRef.current}>{children}</Provider>;
 };
 
-// Load state from local storage
 const loadState = (): any => {
   try {
     const serializedState = localStorage.getItem('reduxState');
@@ -54,13 +49,11 @@ const loadState = (): any => {
   }
 };
 
-// Save state to local storage
 const saveState = (state: any): void => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('reduxState', serializedState);
     window.dispatchEvent(new Event("storage"));
   } catch {
-    // Ignore write errors
   }
 };
