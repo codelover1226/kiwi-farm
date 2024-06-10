@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { CustomSelect } from "@/components/ui/select"
 import { toast } from "react-hot-toast";
 import { selectUser } from "@/store/features/auth/authSlice";
-import {ICoupons} from "./../../(backend)/dashboard/coupon/page"
+import {ICoupons} from "./../../(backend)/dashboard/normalCoupon/page"
 import _ from 'lodash';
 
 import {
