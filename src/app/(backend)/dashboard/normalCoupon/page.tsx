@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -102,9 +101,6 @@ export default function Home(){
   const [selectedCoupon, setSelectedCoupon] = useState<string | null>('-1')
   const [id, setId] = useState<string | null>("all")
   const [selectedProduct, setSelectedProduct] = useState<string | null>("");
-  const dispatch = useAppDispatch();
-  dispatch(getProducts({ type: "all", user: 'all' }));
-  const products = useAppSelector(selectProducts);
 
   const getCoupons = async (id: string) => {
     try {
@@ -128,7 +124,6 @@ export default function Home(){
   };
 
   useEffect(() => {
-    
     getCoupons("all");
   }, []);
 
@@ -162,7 +157,6 @@ export default function Home(){
       }
       setIsLoading(true);
       if (selectedCoupon == "-1") {
-        formData.append("product", JSON.stringify({product: selectedProduct, discount: form.getValues("discount")}));
         const response = await fetch("/api/coupons/insert", {
           method: "POST",
           body: formData,
@@ -170,6 +164,8 @@ export default function Home(){
         if (response.status === 200) {
           toast.success("You added the new product!.");
           getCoupons("all");
+          form.setValue("code", "");
+          form.setValue("discount", 0);
         } else {
           const error = await response.json();
           toast.error(error);
@@ -177,15 +173,6 @@ export default function Home(){
       } 
       else {
         formData.append("id", coupons[id].id);
-        let cProduct = _.cloneDeep(coupons.find(p=> p.id === coupons[id].id));
-        let temp = cProduct.product;
-        let temp_product = temp.findIndex(p=> p.product === selectedProduct);
-        if (temp_product !== -1) {
-          temp[temp_product].discount = form.getValues("discount");
-        }else{
-          temp.push({product: selectedProduct, discount: form.getValues("discount")})
-        }
-        formData.append("product", JSON.stringify(temp));
         const response = await fetch("/api/coupons/update", {
           method: "POST",
           body: formData,
@@ -215,12 +202,14 @@ export default function Home(){
   const handleInputChange = (e : any) => {
     setSelectedCoupon(e)
     if(e === '-1'){
-      form.setValue("code", "")
-      setId("")
-      return
+      form.setValue("code", "");
+      form.setValue("discount", 0);
+      setId("");
+      return;
     }
     setId(e);
     form.setValue("code", coupons[e].code);
+    form.setValue("discount", coupons[e].discount);
   }
 
   async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
@@ -255,7 +244,7 @@ export default function Home(){
 
   return(
     <div className="">
-      <h2 className="text-2xl py-3 self-center text-center">Manage Coupons</h2>
+      <h2 className="text-2xl py-3 self-center text-center">Manage Normal Coupons</h2>
       <div className="flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4 max-w-[900px] mx-auto mt-6">
         <div className="max-w-[600px] mx-auto px-2">
           <div className="w-full flex my-6">
@@ -267,6 +256,7 @@ export default function Home(){
                 <Button
                   className="bg-[#ee4848] hover:bg-[#f85d5d] w-32 h-9 "
                   onClick={handleDelete}
+                  disabled={selectedCoupon === "-1"}
                 >
                   Delete
                 </Button>
@@ -299,39 +289,6 @@ export default function Home(){
                                 placeholder="Input Code"
                                 {...field}
                               />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="mt-0 w-full min-w-[128px]">
-                    <FormField
-                      control={form.control}
-                      name="discount"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-wrap justify-center gap-3">
-                          <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                            Special Deal Rules :
-                          </FormLabel>
-                          <FormControl
-                            className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <select 
-                                className='mx-0 w-full bg-white text-sm py-2 my-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md' 
-                                value={selectedProduct} 
-                                onChange={handleChange}
-                                >
-                                <option value="" disabled>Select Product</option>
-                                {products.map((item, index) => (
-                                  <option key={index} value={item.id}>{item.title}</option>
-                                ))}
-                              </select>
                               <FormMessage className="absolute" />
                             </div>
                           </FormControl>

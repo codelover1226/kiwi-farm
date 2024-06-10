@@ -11,7 +11,7 @@ export async function POST(request : Request, params : {
     } = await request.json();
     const reqType = req.type;
     const reqUser = req.user;
-    // console.log(req)
+
     try {
         if (reqType == "all") {
             const {data, error} = await supabase
@@ -29,15 +29,8 @@ export async function POST(request : Request, params : {
             const {data , error} = await supabase
                 .from('products')
                 .select()
-                // .eq('type', reqData)
-                // .select("*, users(id, title)")
-                // .contains('user', {title:"super"})
                 .eq('type', reqType)
                 .order('title', {ascending: true});
-                // .match({'type': reqData, "user_id":12})
-                // console.log("data")
-                // console.log(data)
-                // .match({'type': reqData, "user_id": 12})
 
             if (error) {
                 return NextResponse.json(error.message, {status: 401});

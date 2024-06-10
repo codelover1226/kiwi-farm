@@ -46,7 +46,6 @@ export default function About() {
         </div>
         {cartItems.map((item: CartProduct, index: number) => {
           const product : IProduct = products.find(p => p.id === item.product_id);
-          console.log(products, "+++");
           return (
             <div key={index} className="w-full max-w-[1280px] sm:flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
               <div className="w-full flex text-left">
@@ -87,9 +86,17 @@ export default function About() {
                 </div>
               </div>
               <div className="w-full flex content-center mt-6 sm:mt-0">
-                <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                {item.qty > item.s_qty ?
+                  <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? product.price : 'N/A'}</p><p className="text-red-700">: ${item.s_price}</p></p>
+                  :
+                  <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                }
                 <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
-                <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
+                {item.qty > item.s_qty ?
+                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">$ {item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></p>
+                  :
+                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
+                }
               </div>
             </div>
           );

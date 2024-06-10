@@ -22,18 +22,8 @@ const saveFile = async (formData, key) => {
 export async function POST(req : Request) {
   
     try {
-      console.log(req.body)
         const formData = await req.formData();
         const imgUrl = await saveFile(formData, "imgFile");
-        // const iterator = formData.entries();
-        // let entry = iterator.next();
-        // while (!entry.done) {
-        //     const [key,
-        //         value] = entry.value;
-        //     console.log(`Key: ${key}, Value: ${value}`);
-        //     entry = iterator.next();
-        // }
-
         const user_id = formData.get("user_id");
         const price = formData.get("price");
         const title = formData.get("title");

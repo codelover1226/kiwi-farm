@@ -10,7 +10,7 @@ export default function Home(){
     const user = useAppSelector(selectUser);
     return (
         <div className="">
-            <h2 className="text-2xl py-3 self-center text-center">Manage Agents</h2>
+            <h2 className="text-2xl py-3 self-center text-center">Manage Viewer</h2>
             <div className="">
                 <ManagePassword user={user.title}/>
             </div>

@@ -8,14 +8,14 @@ export async function POST(request : Request, params : {
   const formData = await request.formData();
   const id = formData.get('id')
   const code = formData.get("code");
-  const product = formData.get("product");
+  const discount = formData.get("discount");
   
   try {
     const {error} = await supabase
       .from('coupons')
       .update({
         code,
-        product: JSON.parse(String(product))
+        discount: discount
       })
       .eq("id", id)
     if (error) {
