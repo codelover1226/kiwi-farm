@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 export default function Login() {
   const isLogin = useAppSelector(selectIslogin);
   if(isLogin) {
-    redirect('/dashboard');
+    // redirect('/dashboard');
   }
   return (
     <div className='min-h-[calc(100vh-220px)]'>
