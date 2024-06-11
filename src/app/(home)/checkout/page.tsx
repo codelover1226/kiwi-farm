@@ -21,7 +21,6 @@ import _ from 'lodash';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -552,15 +551,14 @@ export default function About() {
         </div>
         <div className="w-full">
           <div className="w-full text-center">
-            <div className="w-full flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
-              <div className="w-full text-left sm:flex hidden">
+            <div className="w-full border-b-[1px] grid grid-cols-3 border-gray-300 pb-3 mx-auto mt-6">
+              <div className="w-full text-left sm:flex col-span-1 hidden">
                 Product
               </div>
-              <div className="w-full sm:flex hidden">
+              <div className="w-full sm:flex col-span-2 ml-5 hidden">
                 <p className="w-full text-left">Price</p>
                 <p className="w-full text-left">Quantity</p>
-                <p className="w-full text-right">Total</p>
-                <p className="w-full text-right">Discount Total</p>
+                <p className="w-full text-left">Total</p>
               </div>
             </div>
             {cartItems.map((item: CartProduct, index: number) => {
@@ -568,8 +566,8 @@ export default function About() {
               const disProduct = couponVal?.product?.find(p=> p.product === String(item.product_id));
               return (
                 <div>
-                  <div key={index} className="w-full max-w-[1280px] flex border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
-                    <div className="w-full text-left sm:flex">
+                  <div key={index} className="w-full max-w-[1280px] grid grid-cols-3 border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
+                    <div className="w-full text-left col-span-1 sm:flex">
                       <Image
                         className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
                         src={product?.image}
@@ -586,29 +584,43 @@ export default function About() {
                         </p>
                       </div>
                     </div>
-                    <div className="w-full flex content-center mt-6 sm:mt-0">
+                    <div className="w-full flex content-center mt-6 col-span-2 ml-5 sm:mt-0">
                       {item.qty > item.s_qty ?
                         couponVal?.code ?
-                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? product.price : 'N/A'}</p><p className="text-red-700">: ${item.s_price * (100 - couponVal?.discount) / 100}</p></p>
+                          <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
+                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
+                              <span className="flex sm:hidden font-bold mr-3">Price : </span>
+                              <p className="line-through">${product? product.price : 'N/A'}</p>
+                              <p className="text-red-700">: ${item.s_price * (100 - couponVal?.discount) / 100}</p>
+                            </div>
+                          </div>
                           :
-                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? product.price : 'N/A'}</p><p className="text-red-700">: ${item.s_price}</p></p>
+                          <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
+                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
+                              <span className="flex sm:hidden font-bold mr-3">Price : </span>
+                              <p className="line-through">${product? product.price : 'N/A'}</p>
+                              <p className="text-red-700">: ${item.s_price}</p>
+                            </div>
+                          </div>
                         :
                         couponVal?.code ?
-                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(product.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(product.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></p>
+                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(product.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(product.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></div>
                         :
                         <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
                       }
                       <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
                       {item.qty > item.s_qty ?
                         couponVal?.code ?
-                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></p>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><div className="line-through">${item.qty * Number(product?.price)}</div><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></div>
                           :
-                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></p>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></div>
                         :
                         couponVal?.code ?
-                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(product?.price) * (100 - couponVal?.discount) / 100}</p></p>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(product?.price) * (100 - couponVal?.discount) / 100}</p></div>
                           :
-                          <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(product?.price)}</p>
+                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(product?.price)}</p>
                       }
                     </div>
                   </div>
