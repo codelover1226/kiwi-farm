@@ -15,10 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from 'react-hot-toast';
-import {
-  getAgents
-} from "@/store/features/agents/agentsSlice";
+import { toast } from "react-hot-toast";
+import { getAgents } from "@/store/features/agents/agentsSlice";
 
 import { useAppDispatch } from "@/store/hooks";
 
@@ -35,16 +33,16 @@ export const newUserSchema = z.object({
   isAdmin: z.boolean({
     required_error: "isAdmin is required",
     invalid_type_error: "isAdmin must be a boolean",
-  })
+  }),
 });
 
 export type TNewUserSchema = z.infer<typeof newUserSchema>;
 
-export function NewUserForm({ user }:{ user:string}) {
+export function NewUserForm({ user }: { user: string }) {
   const isSuperUser = user == "super";
   const router = useRouter();
   const dispatch = useAppDispatch();
-  
+
   const form = useForm<z.infer<typeof newUserSchema>>({
     resolver: zodResolver(newUserSchema),
     defaultValues: {
@@ -57,7 +55,7 @@ export function NewUserForm({ user }:{ user:string}) {
 
   async function onSubmit(values: z.infer<typeof newUserSchema>) {
     try {
-      if(values.password1 == values.password){
+      if (values.password1 == values.password) {
         toast.error("Passwords can't be same.");
         return;
       }
@@ -68,10 +66,10 @@ export function NewUserForm({ user }:{ user:string}) {
           "Content-Type": "application/json",
         },
       });
-      if(response.status === 200) {
-        toast.success('You added the new user!.');
+      if (response.status === 200) {
+        toast.success("You added the new user!.");
         dispatch(getAgents(isSuperUser));
-      }else{
+      } else {
         const unit8 = (await response.body.getReader().read()).value;
         const errormsg = Buffer.from(unit8).toString();
         toast.error(errormsg);
@@ -103,7 +101,7 @@ export function NewUserForm({ user }:{ user:string}) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Agent Name</FormLabel>
                     <FormControl>
                       <Input
                         maxLength={40}
@@ -124,7 +122,7 @@ export function NewUserForm({ user }:{ user:string}) {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Agent Password</FormLabel>
                     <FormControl>
                       <Input
                         className="bg-white"
@@ -145,7 +143,7 @@ export function NewUserForm({ user }:{ user:string}) {
                 name="password1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>For visitor</FormLabel>
+                    <FormLabel>Visitor Password</FormLabel>
                     <FormControl>
                       <Input
                         className="bg-white"
@@ -160,13 +158,21 @@ export function NewUserForm({ user }:{ user:string}) {
                 )}
               />
             </div>
-            <div className={isSuperUser?`w-2/12 min-w-[128px] mt-0 hidden`:`w-2/12 min-w-[128px] mt-0 hidden`}>
+            <div
+              className={
+                isSuperUser
+                  ? `w-2/12 min-w-[128px] mt-0 hidden`
+                  : `w-2/12 min-w-[128px] mt-0 hidden`
+              }
+            >
               <FormField
                 control={form.control}
                 name="isAdmin"
                 render={({ field }) => (
                   <FormItem className="w-[30px]">
-                    <FormLabel className="text-center self-center">isAdmin</FormLabel>
+                    <FormLabel className="text-center self-center">
+                      isAdmin
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className="bg-white"

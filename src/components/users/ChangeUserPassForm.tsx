@@ -15,10 +15,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from 'react-hot-toast';
-import {
-  selectUser,
-} from "@/store/features/auth/authSlice";
+import { toast } from "react-hot-toast";
+import { selectUser } from "@/store/features/auth/authSlice";
 import { useAppSelector } from "@/store/hooks";
 
 export const changeUserPassSchema = z.object({
@@ -34,7 +32,7 @@ export type TChangeUserPaaSchema = z.infer<typeof changeUserPassSchema>;
 
 export function ChangeUserPassForm() {
   const user = useAppSelector(selectUser);
-  
+
   const form = useForm<z.infer<typeof changeUserPassSchema>>({
     resolver: zodResolver(changeUserPassSchema),
     defaultValues: {
@@ -58,9 +56,9 @@ export function ChangeUserPassForm() {
         },
       });
       // console.log(response);
-      if(response.status === 200) {
-        toast.success('You changed your password!.');
-      }else{
+      if (response.status === 200) {
+        toast.success("You changed your password!.");
+      } else {
         const unit8 = (await response.body.getReader().read()).value;
         const errormsg = Buffer.from(unit8).toString();
         toast.error(errormsg);
@@ -82,14 +80,13 @@ export function ChangeUserPassForm() {
             <h2 className="text-xl text-center">Change Password</h2>
           </div>
           <div className="w-full flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-4">
-            
-          <div className="w-2/12 min-w-[128px] mt-0">
+            <div className="w-2/12 min-w-[128px] mt-0">
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Agent Password</FormLabel>
                     <FormControl>
                       <Input
                         className="bg-white"
@@ -110,7 +107,7 @@ export function ChangeUserPassForm() {
                 name="password1"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>For visitor</FormLabel>
+                    <FormLabel>Visitor Password</FormLabel>
                     <FormControl>
                       <Input
                         className="bg-white"
@@ -125,7 +122,7 @@ export function ChangeUserPassForm() {
                 )}
               />
             </div>
-            
+
             <div className="mt-3 w-[128px]">
               <Button
                 className="bg-[#017c6b] hover:bg-[#009688] w-32 h-12 mt-2"

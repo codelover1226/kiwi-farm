@@ -3,8 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { forwardRef, useState, useEffect } from "react";
-import * as Select from '@radix-ui/react-select';
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import * as Select from "@radix-ui/react-select";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "@radix-ui/react-icons";
 import {
   Form,
   FormControl,
@@ -19,9 +23,9 @@ import { Button } from "@/components/ui/button";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { selectProducts } from "@/store/features/products/productsSlice";
 import { getProducts } from "@/store/features/products/productsSlice";
-import _ from 'lodash';
+import _ from "lodash";
 
-import classnames from 'classnames';
+import classnames from "classnames";
 
 const newCouponSchema = z.object({
   code: z.string().min(1, { message: "Code is required." }),
@@ -31,17 +35,21 @@ const newCouponSchema = z.object({
 export interface ICoupons {
   id: string;
   code: string;
-  product: Array<{product: string, discount: number}>;
+  product: Array<{ product: string; discount: number }>;
   discount: number;
 }
 
 interface SelectDemoProps {
-  value: string; 
-  onValueChange: (value: string) => void; 
-  coupons: ICoupons[],
+  value: string;
+  onValueChange: (value: string) => void;
+  coupons: ICoupons[];
 }
 
-const SelectDemo: React.FC<SelectDemoProps> = ({value, onValueChange, coupons}) => (
+const SelectDemo: React.FC<SelectDemoProps> = ({
+  value,
+  onValueChange,
+  coupons,
+}) => (
   <Select.Root value={value} onValueChange={onValueChange}>
     <Select.Trigger
       className="inline-flex items-center justify-between w-full rounded px-[15px] text-[13px] leading-none h-full gap-[5px] bg-white text-violet11 shadow-[0_2px_10px] shadow-black/10 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-violet9 outline-none"
@@ -59,11 +67,20 @@ const SelectDemo: React.FC<SelectDemoProps> = ({value, onValueChange, coupons}) 
         </Select.ScrollUpButton>
         <Select.Viewport className="p-[5px] ">
           <Select.Group className="">
-          <SelectItem key={"coupons-1"} value={"-1"} className=" text-3xl font-bold text-green-600">* NEW</SelectItem>
-            {coupons.map((coupon, index) => {  
+            <SelectItem
+              key={"coupons-1"}
+              value={"-1"}
+              className=" text-3xl font-bold text-green-600"
+            >
+              * NEW
+            </SelectItem>
+            {coupons.map((coupon, index) => {
               return (
-              <SelectItem key={"coupons" + index} value={String(index)}>{coupon.code} - {coupon.discount}</SelectItem>
-            )})}
+                <SelectItem key={"coupons" + index} value={String(index)}>
+                  {coupon.code} - {coupon.discount}
+                </SelectItem>
+              );
+            })}
           </Select.Group>
         </Select.Viewport>
         <Select.ScrollDownButton className="flex items-center justify-center h-2 bg-white text-violet11 cursor-default">
@@ -73,39 +90,42 @@ const SelectDemo: React.FC<SelectDemoProps> = ({value, onValueChange, coupons}) 
     </Select.Portal>
   </Select.Root>
 );
-interface SelectItemProps extends React.ComponentPropsWithoutRef<typeof Select.Item> {
+interface SelectItemProps
+  extends React.ComponentPropsWithoutRef<typeof Select.Item> {
   value: string;
 }
 
-const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(({ children, className, ...props }, forwardedRef) => {
-  return (
-    <Select.Item
-      className={classnames(
-        'text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1',
-        className
-      )}
-      {...props}
-      ref={forwardedRef}
-    >
-      <Select.ItemText>{children}</Select.ItemText>
-      <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
-  );
-});
+const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
+  ({ children, className, ...props }, forwardedRef) => {
+    return (
+      <Select.Item
+        className={classnames(
+          "text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1",
+          className
+        )}
+        {...props}
+        ref={forwardedRef}
+      >
+        <Select.ItemText>{children}</Select.ItemText>
+        <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+          <CheckIcon />
+        </Select.ItemIndicator>
+      </Select.Item>
+    );
+  }
+);
 
-export default function Home(){
-  const [coupons, setCoupons] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedCoupon, setSelectedCoupon] = useState<string | null>('-1')
-  const [id, setId] = useState<string | null>("all")
+export default function Home() {
+  const [coupons, setCoupons] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<string | null>("-1");
+  const [id, setId] = useState<string | null>("all");
   const [selectedProduct, setSelectedProduct] = useState<string | null>("");
 
   const getCoupons = async (id: string) => {
     try {
       const formData = new FormData();
-      formData.append('id', id);
+      formData.append("id", id);
       const response = await fetch("/api/coupons/get", {
         method: "POST",
         body: formData,
@@ -138,15 +158,17 @@ export default function Home(){
   const handleChange = (event: any) => {
     setSelectedProduct(event.target.value);
     let temp = coupons[selectedCoupon];
-    let product = temp?.product.findIndex(p=> p.product === event.target.value);
+    let product = temp?.product.findIndex(
+      (p) => p.product === event.target.value
+    );
     if (product !== -1) {
-      form.setValue('discount', Number(temp?.product[product].discount || 0));
-    }else{
-      form.setValue('discount', 0);
+      form.setValue("discount", Number(temp?.product[product].discount || 0));
+    } else {
+      form.setValue("discount", 0);
     }
-  }
+  };
 
-  async function onSubmit(values: z.infer<typeof newCouponSchema>){
+  async function onSubmit(values: z.infer<typeof newCouponSchema>) {
     try {
       const formData = new FormData();
       for (const key in values) {
@@ -170,8 +192,7 @@ export default function Home(){
           const error = await response.json();
           toast.error(error);
         }
-      } 
-      else {
+      } else {
         formData.append("id", coupons[id].id);
         const response = await fetch("/api/coupons/update", {
           method: "POST",
@@ -191,17 +212,17 @@ export default function Home(){
     setIsLoading(false);
   }
 
-  const discountChange = (event: any) =>{
+  const discountChange = (event: any) => {
     const value = parseInt(event.target.value);
     if (value < 0 || value > 100) {
       return;
     }
     form.setValue("discount", value);
-  }
+  };
 
-  const handleInputChange = (e : any) => {
-    setSelectedCoupon(e)
-    if(e === '-1'){
+  const handleInputChange = (e: any) => {
+    setSelectedCoupon(e);
+    if (e === "-1") {
       form.setValue("code", "");
       form.setValue("discount", 0);
       setId("");
@@ -210,47 +231,62 @@ export default function Home(){
     setId(e);
     form.setValue("code", coupons[e].code);
     form.setValue("discount", coupons[e].discount);
-  }
+  };
 
   async function handleDelete(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     try {
-      if(selectedCoupon == "-1"){
-        toast.error('Please select correct item.');
-        return
+      if (selectedCoupon == "-1") {
+        toast.error("Please select correct item.");
+        return;
       }
       const response = await fetch("/api/coupons/delete", {
         method: "POST",
-        body: JSON.stringify({id: coupons[id].id}),
+        body: JSON.stringify({ id: coupons[id].id }),
         headers: {
           "Content-Type": "application/json",
         },
       });
-      if(response.ok) {
-        toast.success('You deleted the coupon!.');
-        form.setValue("code", "")
-        form.setValue("discount", 0)
-        setId("")
+      if (response.ok) {
+        toast.success("You deleted the coupon!.");
+        form.setValue("code", "");
+        form.setValue("discount", 0);
+        setId("");
         getCoupons("all");
-      }else{
+      } else {
         const unit8 = (await response.body.getReader().read()).value;
         const msg = Buffer.from(unit8).toString();
-        toast.error('Failed to delete coupon\n' + msg);
+        toast.error("Failed to delete coupon\n" + msg);
       }
     } catch (error) {
-        toast.error(error.message);
+      toast.error(error.message);
     }
   }
 
-  return(
+  return (
     <div className="">
-      <h2 className="text-2xl py-3 self-center text-center">Manage Normal Coupons</h2>
+      <h2 className="text-2xl py-3 self-center text-center">
+        Manage Normal Coupons
+      </h2>
+
       <div className="flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4 max-w-[900px] mx-auto mt-6">
+        <p className="text-lg self-center text-center px-20 text-blue-800">
+          This page is for normal coupons. You can create a new "Coupon Code"
+          and input what % discount off the total bill to give to the customer.
+          <br />
+          <br />
+          You can also select the "Code" from the dropdown list to update the
+          discount amount for that specific code.
+        </p>
         <div className="max-w-[600px] mx-auto px-2">
           <div className="w-full flex my-6">
             <div className="flex space-x-3 mx-auto">
               <div className="min-w-[150px]">
-                <SelectDemo value={selectedCoupon} onValueChange={handleInputChange} coupons={coupons}/>
+                <SelectDemo
+                  value={selectedCoupon}
+                  onValueChange={handleInputChange}
+                  coupons={coupons}
+                />
               </div>
               <div className="">
                 <Button
@@ -274,7 +310,7 @@ export default function Home(){
                       render={({ field }) => (
                         <FormItem className="flex w-full flex-wrap justify-center gap-3">
                           <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                            Code :
+                            Coupon Code :
                           </FormLabel>
                           <FormControl
                             className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
@@ -303,7 +339,7 @@ export default function Home(){
                       render={({ field }) => (
                         <FormItem className="flex w-full flex-wrap justify-center gap-3">
                           <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                            Discount :
+                            Discount %:
                           </FormLabel>
                           <FormControl
                             className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
@@ -327,11 +363,12 @@ export default function Home(){
                       )}
                     />
                   </div>
-                  <input type="hidden" value={id}>
-                  </input>
+                  <input type="hidden" value={id}></input>
                   <div className="w-full text-center">
                     <Button
-                      className={"bg-[#017c6b] hover:bg-[#009688] w-32 h-12 mt-2 "}
+                      className={
+                        "bg-[#017c6b] hover:bg-[#009688] w-32 h-12 mt-2 "
+                      }
                       type="submit"
                       disabled={isLoading}
                     >
@@ -345,5 +382,5 @@ export default function Home(){
         </div>
       </div>
     </div>
-  )
+  );
 }
