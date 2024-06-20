@@ -268,16 +268,16 @@ export default function Home() {
       <h2 className="text-2xl py-3 self-center text-center">
         Manage Normal Coupons
       </h2>
+      <p className="text-lg self-center text-center px-20 text-blue-800">
+        This page is for normal coupons. You can create a new "Coupon Code" and
+        input what % discount off the total bill to give to the customer.
+        <br />
+        <br />
+        You can also select the "Code" from the dropdown list to update the
+        discount amount for that specific code.
+      </p>
 
       <div className="flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4 max-w-[900px] mx-auto mt-6">
-        <p className="text-lg self-center text-center px-20 text-blue-800">
-          This page is for normal coupons. You can create a new "Coupon Code"
-          and input what % discount off the total bill to give to the customer.
-          <br />
-          <br />
-          You can also select the "Code" from the dropdown list to update the
-          discount amount for that specific code.
-        </p>
         <div className="max-w-[600px] mx-auto px-2">
           <div className="w-full flex my-6">
             <div className="flex space-x-3 mx-auto">
