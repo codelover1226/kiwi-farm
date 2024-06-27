@@ -585,7 +585,7 @@ export default function About() {
                       </div>
                     </div>
                     <div className="w-full flex content-center mt-6 col-span-2 ml-5 sm:mt-0">
-                      {item.qty > item.s_qty ?
+                      {item.qty >= item.s_qty ?
                         couponVal?.code ?
                           <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
                             <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
@@ -611,7 +611,7 @@ export default function About() {
                         <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
                       }
                       <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
-                      {item.qty > item.s_qty ?
+                      {item.qty >= item.s_qty ?
                         couponVal?.code ?
                           <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><div className="line-through">${item.qty * Number(product?.price)}</div><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></div>
                           :

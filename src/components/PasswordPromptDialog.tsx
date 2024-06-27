@@ -55,7 +55,7 @@ const PasswordPromptDialog = () => {
         const user = res;
         dispatch(setUser({
           id: user.id,
-          title: "",
+          title: user.title,
           password: "",
           password1: "",
           slug: "",
