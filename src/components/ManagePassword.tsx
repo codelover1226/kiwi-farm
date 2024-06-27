@@ -213,9 +213,18 @@ export function ManagePassword({ user }:{ user:string }) {
             </div>
           <div className="w-full flex flex-row flex-wrap bg-accent rounded-sm p-6 gap-5 justify-start sm:gap-4">
             {isAdmin && 
-              <div className="w-3/12 min-w-[128px] h-12">
-                <SelectDemo value={formData.userid} onValueChange={handleInputChange} agents={agents}/>
-              </div>
+                <select defaultValue={''} onChange={(e) => handleInputChange(e.target.value)} className="text-[15px] leading-[18.5px] text-[#000000] outline-none px-5 rounded-sm w-3/12 min-w-[128px] h-12">
+                  {
+                    agents.map((p, index)=> {
+                      return (
+                        <option value={index}>{p.title}</option>
+                      )
+                    })
+                  }
+                </select>
+              // <div className="w-3/12 min-w-[128px] h-12">
+              //   <SelectDemo value={formData.userid} onValueChange={handleInputChange} agents={agents}/>
+              // </div>
             }
             <div className="w-[128px]">
               <Button

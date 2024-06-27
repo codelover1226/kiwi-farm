@@ -88,8 +88,12 @@ export function NavBar({backend}) {
                 router.push('/cart')
               }}>
                 <div className={`content-center relative cursor-pointer flex font-bold duration-200 w-[40px] `}>
-                  <img src="./carticon.png" className="w-[35px]">
-                  </img>
+                  <Image
+                    src="/carticon.png"
+                    alt="Kiwi Farms - Premium Cannabis"
+                    width={35}
+                    height={35}
+                  />
                   <div className="absolute top-1 left-6 text-xs font-bold rounded-full bg-green-300 px-1">
                     {items?.length}
                   </div>

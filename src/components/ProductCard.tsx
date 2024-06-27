@@ -91,7 +91,6 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
       </div>
       
       {products.map((product: IProduct, i: number) => { 
-        // if( product.user_id != "12" ) return; 
         return (
           <Dialog key={'dialog' + i}>
             <ProductCardItem 
