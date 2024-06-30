@@ -136,7 +136,7 @@ export default function About() {
         updateProducts();
         localStorage.removeItem("cartItems")
         toast.success("You added the new product!.");
-        router.push('/')
+        // router.push('/thanks')
       } else {
         const error = await response.json();
         toast.error(error);
