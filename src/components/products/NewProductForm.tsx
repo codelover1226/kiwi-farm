@@ -285,9 +285,8 @@ export function NewProductForm() {
                       }}
                     >
                       <div>
-                        <Input
-                          maxLength={40}
-                          className="bg-white mt-0"
+                        <textarea
+                          className="bg-white mt-0 w-full p-3"
                           placeholder="Description"
                           {...field}
                         />
