@@ -63,7 +63,7 @@ export default function About() {
   for (let i = 0; i < cartItems.length; i++) {
     let cProduct = _.cloneDeep(products.find(p=> p.id === cartItems[i].product_id));
     if (cProduct) {
-        cProduct.quantity = String(Number(cProduct.quantity) - Number(cartItems[i].qty));
+        cProduct.quantity = "0";
         for (let j = 0; j < cProduct.flavor.length; j++) {
           if (cProduct.flavor[j].name === cartItems[i].flavor_name) {
             cProduct.flavor[j].qty -= Number(cartItems[i].qty);
@@ -113,7 +113,7 @@ export default function About() {
       deliveryInstruction: ""
     },
   });
-
+//
   async function onSubmit(values: z.infer<typeof newCustomerSchema>) {
     try {
       const formData = new FormData();
@@ -136,7 +136,7 @@ export default function About() {
         updateProducts();
         localStorage.removeItem("cartItems")
         toast.success("You added the new product!.");
-        // router.push('/thanks')
+        router.push('/')
       } else {
         const error = await response.json();
         toast.error(error);

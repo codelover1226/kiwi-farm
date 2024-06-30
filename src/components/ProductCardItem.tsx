@@ -1,4 +1,5 @@
 'use client'
+import React from 'react';
 import Image from 'next/image';
 import { ReactEventHandler, useState, useEffect } from 'react';
 import {
@@ -44,6 +45,14 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
   const isAgency = useAppSelector(selectIsAgency);
   const isCart = useAppSelector(selectIsCart);
 
+  const heightCard = React.useMemo(()=> {
+    if (isAgency || isAdmin || isCart) {
+      return "630px";
+    }else{
+      return "576px";
+    }
+  }, [isAgency, isAdmin, isCart]);
+
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
     setMaxQty(product.flavor[event.target.value].qty);
@@ -71,8 +80,8 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     const newCartItem : CartProduct = {
       product_id: product.id,
       flavor_name : product.flavor[selectedOption].name,
-      s_price: product.s_coupon.price,
-      s_qty: product.s_coupon.qty,
+      s_price: product.s_coupon?.price,
+      s_qty: product.s_coupon?.qty,
       qty: qty
     }
 
@@ -87,7 +96,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     <div>
       <DialogTrigger>
         <Card
-          className='max-w-sm h-[34rem] rounded overflow-hidden shadow-lg p-2 hover:bg-accent'
+          className={`max-w-sm h-[${heightCard}] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`}
           key={'card' + i}>
           <CardHeader className='pb-0'>
             <Image
@@ -97,15 +106,15 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
               width={300}
               height={300}
             />
-            <CardTitle className='text-xl text-start px-4 py-2'>{product.title}</CardTitle>
+            <CardTitle className='text-xl text-center py-2'>{product.title}</CardTitle>
           </CardHeader>
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
-                {(isAgency || isAdmin || isCart) && <div className=''>
+                {(isAgency || isAdmin || isCart) && <div className='text-center'>
                   <pre>price    : ${product.price}</pre>
                 </div>}
-                <div className='text-lg font-normal '>
-                  description : {product.description}
+                <div className='text-sm font-normal text-center '>
+                  {product.description}
                 </div>
             </CardDescription>
           </CardContent>

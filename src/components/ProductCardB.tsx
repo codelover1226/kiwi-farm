@@ -31,6 +31,7 @@ export function ProductCardB (props: any) {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
+  console.log(products, "--->>>");
   useEffect(() => {
     dispatch(getProducts({type:product, user:user.id }));
   },[])
@@ -43,7 +44,7 @@ export function ProductCardB (props: any) {
             <Dialog key={'dialog' + i}>
             <DialogTrigger>
               <Card
-                className='max-w-sm w-[300px] h-[29rem] rounded overflow-hidden shadow-lg p-2 hover:bg-accent'
+                className='max-w-sm w-[384px] h-[660px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent'
                 key={'card' + i}>
                 <CardHeader className='pb-0'>
                   <Image
@@ -61,10 +62,14 @@ export function ProductCardB (props: any) {
                       <div className=''>
                         <pre>price    : ${product.price}</pre>
                       </div>
-                      <div className=''>
-                        <pre>quantity :  {product.quantity}</pre>
-                      </div>
-                      <div className='text-lg font-normal '>
+                      {product.flavor.map((p)=> {
+                        return (
+                          <div className=''>
+                            <pre>{p.name} :  {p.qty}</pre>
+                          </div>
+                          );
+                      })}
+                      <div className='text-sm font-normal '>
                         description : {product.description}  
                       </div>
                   </CardDescription>

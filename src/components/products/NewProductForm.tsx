@@ -125,6 +125,14 @@ export function NewProductForm() {
         });
         if (response.status === 200) {
           toast.success("You added the new product!");
+          form.setValue("title", "");
+          form.setValue("slug", "");
+          form.setValue("description", "");
+          form.setValue("type", null);
+          form.setValue("image", "");
+          setImgFileName("");
+          setPreviewUrl("");
+          form.setValue("price", 0);
           dispatch(getProducts({ type: "all", user: user.id }));
         } else {
           const error = await response.json();
