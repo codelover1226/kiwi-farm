@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import Image from 'next/image';
-import { ReactEventHandler, useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   DialogContent,
   DialogDescription,
@@ -18,13 +18,11 @@ import {
 } from '@/components/ui/card';
 import { IProduct } from '@/store/features/products/productsAPI';
 import { Input } from './ui/input';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { selectUser } from '@/store/features/auth/authSlice';
-import { selectIsNothing, selectIsVisitor, selectIsAdmin, selectIsAgency, selectIsCart } from "@/store/features/auth/authSlice";
+import { useAppSelector } from '@/store/hooks';
+import { selectIsAdmin, selectIsAgency, selectIsCart } from "@/store/features/auth/authSlice";
 import { toast } from "react-hot-toast";
 
 import './user.css'
-import { Json } from '@/supabase/types/test';
 export interface CartProduct {
   product_id: string,
   flavor_name: string,
@@ -34,22 +32,19 @@ export interface CartProduct {
 }
 
 export function ProductCardItem ({product, i}: {product: IProduct, i: number }) {
-  const [flavorname, setFlavorName] = useState("")
   const [qty, setQty] = useState< number | null>(null)
   const [selectedOption, setSelectedOption] = useState< number | null>(null)
   const [maxQty, setMaxQty] = useState <number | null>(0)
-  const isVisitor = useAppSelector(selectIsVisitor);
   const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-  const isNothing = useAppSelector(selectIsNothing);
   const isAdmin = useAppSelector(selectIsAdmin);
   const isAgency = useAppSelector(selectIsAgency);
   const isCart = useAppSelector(selectIsCart);
 
-  const heightCard = React.useMemo(()=> {
+  let heightCard = React.useMemo(()=> {
     if (isAgency || isAdmin || isCart) {
-      return "630px";
+      return `max-w-sm h-[630px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     }else{
-      return "576px";
+      return `max-w-sm h-[576px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     }
   }, [isAgency, isAdmin, isCart]);
 
@@ -96,7 +91,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     <div>
       <DialogTrigger>
         <Card
-          className={`max-w-sm h-[${heightCard}] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`}
+          className={heightCard}
           key={'card' + i}>
           <CardHeader className='pb-0'>
             <Image
