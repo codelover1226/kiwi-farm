@@ -153,7 +153,7 @@ export async function POST(request : Request, params : {
     };
     
     const apiKey = process.env.EMAIL_API_KEY; 
-    // const emailResponse = await sendEmail(emailData.to, emailData.subject, emailData.html, apiKey);
+    const emailResponse = await sendEmail(emailData.to, emailData.subject, emailData.html, apiKey);
     return NextResponse.json("success", {status: 200});
   } catch (error) {
       console.error('Error fetching users:', error);
