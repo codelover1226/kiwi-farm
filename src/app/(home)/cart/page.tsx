@@ -25,8 +25,15 @@ export default function About() {
   }, [user.id]);
   
   const products: IProduct[] = useAppSelector(selectProducts);
-  console.log(products, "--->>>>>>>>>>>>>>>>>", user_id1);
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.qty * Number(products.find(p => p.id === item.product_id)?.price || 0)), 0);
+  let subtotal = 0;
+  for (let i = 0; i < cartItems.length; i++) {
+    const product : IProduct = products.find(p => p.id === cartItems[i].product_id);    
+    if (cartItems[i].qty >= cartItems[i].s_qty) {
+      subtotal += cartItems[i].qty * Number(cartItems[i].s_price)
+    }else{
+      subtotal += cartItems[i].qty * Number(product?.price)
+    }
+  }
   const router = useRouter();
   return (
     <main className=" min-h-screen mb-20 pt-10 pb-10 px-5 md:px-20">

@@ -125,7 +125,7 @@ export default function About() {
       }
       formData.append("deliveryTiem", delivery_date)
       formData.append("cartItems" , JSON.stringify(cartItems))
-      formData.append("coupon_code", couponVal.code),
+      formData.append("coupon_code", couponVal?.code),
       formData.append("cProduct", JSON.stringify(checkoutProducts));
       setIsLoading(true);
       const response = await fetch("/api/products/checkout", {

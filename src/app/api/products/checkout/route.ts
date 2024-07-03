@@ -93,7 +93,7 @@ export async function POST(request : Request, params : {
   const cartItems = cartItemsString? JSON.parse(cartItemsString as string) : null
   const deliveryDate = formData.get("delivery_date")
   const deliveryInstruction= formData.get("deliveryInstruction")
-  const coupon_code = formData.get("coupon_code")
+  const coupon_code = formData.get("coupon_code")? formData.get("coupon_code") : null
   const cProduct = formData.get("cProduct");
   
   try {
