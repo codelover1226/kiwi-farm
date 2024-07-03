@@ -83,21 +83,19 @@ export default function About() {
   const updateProducts = () => {
     dispatch(getProducts({type:"all", user: user_id1}));
   }
-
+  
   useEffect(() => {
     updateProducts();
-    setSubTotal(cartItems.reduce((acc, item) => {
-      const product = products.find(p => p.id === item.product_id);
-      if (!product) return acc;
-      let price = 0;
-      if (item.s_qty < item.qty) {
-        price = Number(item.s_price);
+    let subtotal1 = 0;
+    for (let i = 0; i < cartItems.length; i++) {
+      const product : IProduct = products.find(p => p.id === cartItems[i].product_id);    
+      if (cartItems[i].qty >= cartItems[i].s_qty) {
+        subtotal1 += cartItems[i].qty * Number(cartItems[i].s_price)
       }else{
-        price = Number(product.price);
+        subtotal1 += cartItems[i].qty * Number(product?.price)
       }
-      if (isNaN(price)) return acc; 
-      return acc + (item.qty * price);
-    }, 0));
+    }
+    setSubTotal(subtotal1);
   }, []);
 
   const form = useForm<z.infer<typeof newCustomerSchema>>({
