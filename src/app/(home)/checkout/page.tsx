@@ -1,22 +1,25 @@
-'use client'
+"use client";
 import Image from "next/image";
-import { useEffect, useState } from 'react'
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { useEffect, useState } from "react";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { CartProduct } from "@/components/ProductCardItem";
-import { IProduct } from '@/store/features/products/productsAPI';
-import { useRouter } from 'next/navigation';
-import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
-import data from'./../../../lib/uscity.json'
+import { IProduct } from "@/store/features/products/productsAPI";
+import { useRouter } from "next/navigation";
+import {
+  selectProducts,
+  getProducts,
+} from "@/store/features/products/productsSlice";
+import data from "./../../../lib/uscity.json";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { CustomSelect } from "@/components/ui/select"
+import { CustomSelect } from "@/components/ui/select";
 import { toast } from "react-hot-toast";
 import { selectUser } from "@/store/features/auth/authSlice";
-import {ICoupons} from "./../../(backend)/dashboard/normalCoupon/page"
-import _ from 'lodash';
+import { ICoupons } from "./../../(backend)/dashboard/normalCoupon/page";
+import _ from "lodash";
 
 import {
   Form,
@@ -31,68 +34,79 @@ import { Item } from "@radix-ui/react-navigation-menu";
 const newCustomerSchema = z.object({
   name: z.string().min(1, { message: "name is required." }),
   email: z.string().email({ message: "Invalid email address" }),
-  phoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, { message: "Phone number must be in the format 123-456-7890" }),
+  phoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, {
+    message: "Phone number must be in the format 123-456-7890",
+  }),
   refName: z.string().min(1, { message: "name is required." }),
-  refPhoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, { message: "Phone number must be in the format 123-456-7890" }),
-  state: z.string().min(1, {message: "Please select your state"}),
-  city: z.string().min(1, {message: "Please select your city"}),
-  address: z.string().min(1, {message: "Please select your address"}),
-  deliveryInstruction: z.string().min(1, {message: "Please Enter your Delivery Instruction"}),
+  refPhoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, {
+    message: "Phone number must be in the format 123-456-7890",
+  }),
+  state: z.string().min(1, { message: "Please select your state" }),
+  city: z.string().min(1, { message: "Please select your city" }),
+  address: z.string().min(1, { message: "Please select your address" }),
+  deliveryInstruction: z
+    .string()
+    .min(1, { message: "Please Enter your Delivery Instruction" }),
 });
 
 export default function About() {
   var today = new Date();
-  var time = today.getDay() + "-" + today.getMonth() + "-" + today.getFullYear();
-  const [couponField, setCouponField] = useState(true)
-  const [couponCode, setCouponCode] = useState<string | null>("")
+  var time =
+    today.getDay() + "-" + today.getMonth() + "-" + today.getFullYear();
+  const [couponField, setCouponField] = useState(true);
+  const [couponCode, setCouponCode] = useState<string | null>("");
   const [isLoading, setIsLoading] = useState(false);
   const [delivery_date, setDeliveryDate] = useState<string | null>(time);
-  const [checked, setChecked] = useState(true)
+  const [checked, setChecked] = useState(true);
   const products: IProduct[] = useAppSelector(selectProducts);
-  const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
-  const [couponVal, setCouponVal] = useState<ICoupons>(null)
+  const [cartItems, setCartItems] = useState(
+    JSON.parse(localStorage.getItem("cartItems") || "[]")
+  );
+  const [couponVal, setCouponVal] = useState<ICoupons>(null);
   const [subTotal, setSubTotal] = useState<Number>(0);
   let tempSub: number = 0;
 
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
-  
-
   let checkoutProducts = [];
   for (let i = 0; i < cartItems.length; i++) {
-    let cProduct = _.cloneDeep(products.find(p=> p.id === cartItems[i].product_id));
+    let cProduct = _.cloneDeep(
+      products.find((p) => p.id === cartItems[i].product_id)
+    );
     if (cProduct) {
-        cProduct.quantity = "0";
-        for (let j = 0; j < cProduct.flavor.length; j++) {
-          if (cProduct.flavor[j].name === cartItems[i].flavor_name) {
-            cProduct.flavor[j].qty -= Number(cartItems[i].qty);
-          }
+      cProduct.quantity = "0";
+      for (let j = 0; j < cProduct.flavor.length; j++) {
+        if (cProduct.flavor[j].name === cartItems[i].flavor_name) {
+          cProduct.flavor[j].qty -= Number(cartItems[i].qty);
         }
-        checkoutProducts.push(cProduct);
+      }
+      checkoutProducts.push(cProduct);
     } else {
-        console.error(`Product with id ${cartItems[i].product_id} not found.`);
+      console.error(`Product with id ${cartItems[i].product_id} not found.`);
     }
   }
 
   let user_id1 = user.id;
   if (Number(user_id1) === 12) {
-    user_id1 = 'all';
+    user_id1 = "all";
   }
 
   const updateProducts = () => {
-    dispatch(getProducts({type:"all", user: user_id1}));
-  }
-  
+    dispatch(getProducts({ type: "all", user: user_id1 }));
+  };
+
   useEffect(() => {
     updateProducts();
     let subtotal1 = 0;
     for (let i = 0; i < cartItems.length; i++) {
-      const product : IProduct = products.find(p => p.id === cartItems[i].product_id);    
+      const product: IProduct = products.find(
+        (p) => p.id === cartItems[i].product_id
+      );
       if (cartItems[i].qty >= cartItems[i].s_qty) {
-        subtotal1 += cartItems[i].qty * Number(cartItems[i].s_price)
-      }else{
-        subtotal1 += cartItems[i].qty * Number(product?.price)
+        subtotal1 += cartItems[i].qty * Number(cartItems[i].s_price);
+      } else {
+        subtotal1 += cartItems[i].qty * Number(product?.price);
       }
     }
     setSubTotal(subtotal1);
@@ -108,10 +122,10 @@ export default function About() {
       refPhoneNumber: "",
       state: "",
       city: "",
-      deliveryInstruction: ""
+      deliveryInstruction: "",
     },
   });
-//
+  //
   async function onSubmit(values: z.infer<typeof newCustomerSchema>) {
     try {
       const formData = new FormData();
@@ -121,10 +135,10 @@ export default function About() {
           formData.append(key, value);
         }
       }
-      formData.append("deliveryTiem", delivery_date)
-      formData.append("cartItems" , JSON.stringify(cartItems))
+      formData.append("deliveryTiem", delivery_date);
+      formData.append("cartItems", JSON.stringify(cartItems));
       formData.append("coupon_code", couponVal?.code),
-      formData.append("cProduct", JSON.stringify(checkoutProducts));
+        formData.append("cProduct", JSON.stringify(checkoutProducts));
       setIsLoading(true);
       const response = await fetch("/api/products/checkout", {
         method: "POST",
@@ -132,13 +146,12 @@ export default function About() {
       });
       if (response.status === 200) {
         updateProducts();
-        localStorage.removeItem("cartItems")
+        localStorage.removeItem("cartItems");
         toast.success("Successful!.");
         // router.push('/thanks')
       } else {
         const error = await response.json();
         toast.error(error);
-        
       }
     } catch (error) {
       toast.error(error.message);
@@ -146,80 +159,100 @@ export default function About() {
     setIsLoading(false);
   }
   const onCouponChange = (event: any) => {
-    setCouponCode(event.target.value)
-  }
+    setCouponCode(event.target.value);
+  };
 
-  const showCoupon = (event:any) => {
-    event.preventDefault(false)
-    setCouponField(!couponField)
-  }
-  async function applyCoupon (event:any){
+  const showCoupon = (event: any) => {
+    event.preventDefault(false);
+    setCouponField(!couponField);
+  };
+  async function applyCoupon(event: any) {
     event.preventDefault(false);
     const formData = new FormData();
-    formData.append('code', couponCode);
+    formData.append("code", couponCode);
     try {
       const response = await fetch("/api/coupons/getbyname", {
         method: "POST",
         body: formData,
       });
-      if(response.ok) {
+      if (response.ok) {
         tempSub = 0;
         const data = await response.json();
         const jsonData = JSON.parse(data);
         setCouponVal(jsonData[0]);
         for (let i = 0; i < cartItems.length; i++) {
-          const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
+          const product: IProduct = products.find(
+            (p) => p.id === cartItems[i].product_id
+          );
           if (jsonData[0].discount === undefined) {
             if (cartItems[i].qty > cartItems[i].s_qty) {
               tempSub += cartItems[i].qty * Number(cartItems[i].s_price);
-            }else{
+            } else {
               tempSub += cartItems[i].qty * Number(product.price);
             }
-          }else{
+          } else {
             if (cartItems[i].qty > cartItems[i].s_qty) {
-              tempSub += (cartItems[i].qty * Number(cartItems[i].s_price) * (100 - jsonData[0].discount)) / 100;
-            }else{
-              tempSub += (cartItems[i].qty * Number(product.price) * (100 - jsonData[0].discount)) / 100;
+              tempSub +=
+                (cartItems[i].qty *
+                  Number(cartItems[i].s_price) *
+                  (100 - jsonData[0].discount)) /
+                100;
+            } else {
+              tempSub +=
+                (cartItems[i].qty *
+                  Number(product.price) *
+                  (100 - jsonData[0].discount)) /
+                100;
             }
           }
         }
         setSubTotal(tempSub);
-        toast.success("Coupon code has been successfully applied")
-      }else{
-        toast.error('Cannot find coupon');
+        toast.success("Coupon code has been successfully applied");
+      } else {
+        toast.error("Cannot find coupon");
         setCouponVal({
           id: "",
           code: "",
           product: undefined,
-          discount: 0
-        })
+          discount: 0,
+        });
         for (let i = 0; i < cartItems.length; i++) {
-          const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
+          const product: IProduct = products.find(
+            (p) => p.id === cartItems[i].product_id
+          );
           tempSub += cartItems[i].qty * Number(product.price);
         }
         setSubTotal(tempSub);
       }
-    }
-    catch(error){
-      toast.error(error)
+    } catch (error) {
+      toast.error(error);
     }
   }
   return (
     <main className=" min-h-[68vh] mb-20 pt-10 pb-10 px-5 md:px-20">
-      <p className="w-full text-center text-[30px]">
-        CheckOut
-      </p>
+      <p className="w-full text-center text-[30px]">CheckOut</p>
       <div className="w-full lg:flex max-w-[1280px] mx-auto flex-row-reverse space-x-4">
         <div className="w-full">
           <Form {...form}>
-            <form className="flex py-5 mb-0 justify-center px-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              className="flex py-5 mb-0 justify-center px-4"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <div className="flex md:flex-row flex-wrap text-left  items-center gap-2">
                 <div className=" flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4 space-y-5">
                   <div className="w-full space-y-2">
-                    <button className="outline-none w-full text-center font-bold" onClick={showCoupon}>
-                      Have a coupon? Please click here
+                    <button
+                      className="outline-none w-full text-center text-lg font-bold"
+                      onClick={showCoupon}
+                    >
+                      Have a coupon? Please click{" "}
+                      <span className="text-[#017c6b]">here</span>
                     </button>
-                    <div className={`w-full px-1 transition-max-height duration-500 ease-linear transform overflow-hidden ${couponField? 'max-h-0' : 'max-h-[90px]'}`}>
+                    <div
+                      className={`w-full px-1 transition-max-height duration-500 ease-linear transform overflow-hidden ${
+                        couponField ? "max-h-0" : "max-h-[90px]"
+                      }`}
+                    >
                       <div className="w-full mt-1">
                         <Input
                           maxLength={10}
@@ -229,7 +262,10 @@ export default function About() {
                           onChange={onCouponChange}
                         />
                       </div>
-                      <button onClick={applyCoupon} className="w-full bg-black hover:bg-gray-500 transition-all duration-500 text-white font-bold mt-2 py-2 rounded-sm">
+                      <button
+                        onClick={applyCoupon}
+                        className="w-full bg-[#017c6b] hover:bg-[#30b8a6] transition-all duration-500 text-white font-bold mt-2 py-2 rounded-sm"
+                      >
                         Apply
                       </button>
                     </div>
@@ -241,7 +277,7 @@ export default function About() {
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
                           <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold">
-                            Name :
+                            Name:
                           </FormLabel>
                           <FormControl
                             className="w-full min-w-[128px] "
@@ -253,7 +289,7 @@ export default function About() {
                               <Input
                                 maxLength={40}
                                 className="bg-white mt-0"
-                                placeholder="Enter your name"
+                                placeholder="Please enter name"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -270,7 +306,7 @@ export default function About() {
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
                           <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            Email :
+                            Email:
                           </FormLabel>
                           <FormControl
                             className="w-full min-w-[128px]  "
@@ -282,7 +318,7 @@ export default function About() {
                               <Input
                                 maxLength={40}
                                 className="bg-white mt-0"
-                                placeholder="Enter your email"
+                                placeholder="Please enter email"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -292,94 +328,7 @@ export default function About() {
                       )}
                     />
                   </div>
-                  <div className="w-full flex space-x-2">
-                    <FormField
-                      control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem className="sm:flex w-full justify-center gap-3">
-                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            State :
-                          </FormLabel>
-                          <FormControl
-                            className="w-full min-w-[128px]  "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Please input your state"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    
-                  </div>
-                  <div className="w-full">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem className="sm:flex w-full justify-center gap-3">
-                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            City :
-                          </FormLabel>
-                          <FormControl
-                            className="w-full min-w-[128px]  "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Please input your state"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem className="sm:flex w-full justify-center gap-3">
-                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            Address :
-                          </FormLabel>
-                          <FormControl
-                            className="w-full min-w-[128px]  "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Input your delivery Address"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+
                   <div className="w-full">
                     <FormField
                       control={form.control}
@@ -387,7 +336,7 @@ export default function About() {
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
                           <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            Phone Number :
+                            Phone Number:
                           </FormLabel>
                           <FormControl
                             className="w-full min-w-[128px]  "
@@ -399,7 +348,7 @@ export default function About() {
                               <Input
                                 maxLength={12}
                                 className="bg-white mt-0"
-                                placeholder="Phone Number (123-456-7890)"
+                                placeholder="Please enter your phone number (ex. 718-555-9999)"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -409,6 +358,97 @@ export default function About() {
                       )}
                     />
                   </div>
+
+                  <div className="w-full">
+                    <FormField
+                      control={form.control}
+                      name="address"
+                      render={({ field }) => (
+                        <FormItem className="sm:flex w-full justify-center gap-3">
+                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
+                            Address:
+                          </FormLabel>
+                          <FormControl
+                            className="w-full min-w-[128px]  "
+                            style={{
+                              marginTop: 0,
+                            }}
+                          >
+                            <div>
+                              <Input
+                                maxLength={40}
+                                className="bg-white mt-0"
+                                placeholder="Please enter delivery address"
+                                {...field}
+                              />
+                              <FormMessage className="absolute" />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full">
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem className="sm:flex w-full justify-center gap-3">
+                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
+                            City:
+                          </FormLabel>
+                          <FormControl
+                            className="w-full min-w-[128px]  "
+                            style={{
+                              marginTop: 0,
+                            }}
+                          >
+                            <div>
+                              <Input
+                                maxLength={40}
+                                className="bg-white mt-0"
+                                placeholder="Please enter city"
+                                {...field}
+                              />
+                              <FormMessage className="absolute" />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="w-full flex space-x-2">
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem className="sm:flex w-full justify-center gap-3">
+                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
+                            State:
+                          </FormLabel>
+                          <FormControl
+                            className="w-full min-w-[128px]  "
+                            style={{
+                              marginTop: 0,
+                            }}
+                          >
+                            <div>
+                              <Input
+                                maxLength={40}
+                                className="bg-white mt-0"
+                                placeholder="Please enter state"
+                                {...field}
+                              />
+                              <FormMessage className="absolute" />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <div className="w-full">
                     <FormField
                       control={form.control}
@@ -428,7 +468,7 @@ export default function About() {
                               <Input
                                 maxLength={40}
                                 className="bg-white mt-0"
-                                placeholder="Enter a referral name"
+                                placeholder="Please enter referral name"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -445,7 +485,7 @@ export default function About() {
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
                           <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            Referral  Phone :
+                            Referral Phone:
                           </FormLabel>
                           <FormControl
                             className="w-full min-w-[128px]  "
@@ -457,7 +497,7 @@ export default function About() {
                               <Input
                                 maxLength={12}
                                 className="bg-white mt-0"
-                                placeholder="Referral Phone Number (123-456-7890)"
+                                placeholder="Please enter referral phone number (ex. 718-555-9999)"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -474,7 +514,7 @@ export default function About() {
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
                           <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            Delivery Instruction :
+                            Delivery Instructions:
                           </FormLabel>
                           <FormControl
                             className="w-full min-w-[128px]  "
@@ -486,7 +526,7 @@ export default function About() {
                               <Input
                                 maxLength={400}
                                 className="bg-white mt-0"
-                                placeholder="Delivery Instruction"
+                                placeholder="Please enter delivery instructions"
                                 {...field}
                               />
                               <FormMessage className="absolute" />
@@ -529,19 +569,23 @@ export default function About() {
                     <Input
                       type="date"
                       value={delivery_date}
-                      onChange={(event:any) => {setDeliveryDate(event.target.value)}}
+                      onChange={(event: any) => {
+                        setDeliveryDate(event.target.value);
+                      }}
                       className="bg-white mt-0 w-[150px] mx-auto"
                     />
                   </div>
                   <div className="w-full text-center">
                     <Button
-                      className={"bg-[#017c6b] hover:bg-[#009688] w-32 h-12 mt-2 "}
+                      className={
+                        "bg-[#017c6b] hover:bg-[#009688] w-32 h-12 mt-2 "
+                      }
                       type="submit"
                       disabled={isLoading}
                     >
                       Complete Order
                     </Button>
-                </div>
+                  </div>
                 </div>
               </div>
             </form>
@@ -560,93 +604,195 @@ export default function About() {
               </div>
             </div>
             {cartItems.map((item: CartProduct, index: number) => {
-              const product : IProduct = products.find(p => p.id === item.product_id);
-              const disProduct = couponVal?.product?.find(p=> p.product === String(item.product_id));
+              const product: IProduct = products.find(
+                (p) => p.id === item.product_id
+              );
+              const disProduct = couponVal?.product?.find(
+                (p) => p.product === String(item.product_id)
+              );
               return (
                 <div>
-                  <div key={index} className="w-full max-w-[1280px] grid grid-cols-3 border-b-[1px] border-gray-300 pb-3 mx-auto mt-6">
+                  <div
+                    key={index}
+                    className="w-full max-w-[1280px] grid grid-cols-3 border-b-[1px] border-gray-300 pb-3 mx-auto mt-6"
+                  >
                     <div className="w-full text-left col-span-1 sm:flex">
                       <Image
-                        className='w-[70px] bg-white rounded-full content-center aspect-square object-cover'
+                        className="w-[70px] bg-white rounded-full content-center aspect-square object-cover"
                         src={product?.image}
-                        alt='grass'
+                        alt="grass"
                         width={300}
                         height={300}
                       />
                       <div className="w-full content-center">
                         <p className="sm:ml-6 w-full text-left content-center">
                           {product?.title}
-                        </p>  
+                        </p>
                         <p className="sm:ml-6 w-full text-left content-center">
-                          <span className="font-bold">Flavor</span> : {item.flavor_name}
+                          <span className="font-bold">Flavor</span> :{" "}
+                          {item.flavor_name}
                         </p>
                       </div>
                     </div>
                     <div className="w-full flex content-center mt-6 col-span-2 ml-5 sm:mt-0">
-                      {item.qty >= item.s_qty ?
-                        couponVal?.code ?
+                      {item.qty >= item.s_qty ? (
+                        couponVal?.code ? (
                           <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
-                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <p className="text-gray-500">
+                              Save ${Number(product.price) - item.s_price} when
+                              buy {item.s_qty} or more
+                            </p>
                             <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
-                              <span className="flex sm:hidden font-bold mr-3">Price : </span>
-                              <p className="line-through">${product? product.price : 'N/A'}</p>
-                              <p className="text-red-700">: ${item.s_price * (100 - couponVal?.discount) / 100}</p>
+                              <span className="flex sm:hidden font-bold mr-3">
+                                Price :{" "}
+                              </span>
+                              <p className="line-through">
+                                ${product ? product.price : "N/A"}
+                              </p>
+                              <p className="text-red-700">
+                                : $
+                                {(item.s_price * (100 - couponVal?.discount)) /
+                                  100}
+                              </p>
                             </div>
                           </div>
-                          :
+                        ) : (
                           <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
-                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <p className="text-gray-500">
+                              Save ${Number(product.price) - item.s_price} when
+                              buy {item.s_qty} or more
+                            </p>
                             <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
-                              <span className="flex sm:hidden font-bold mr-3">Price : </span>
-                              <p className="line-through">${product? product.price : 'N/A'}</p>
+                              <span className="flex sm:hidden font-bold mr-3">
+                                Price :{" "}
+                              </span>
+                              <p className="line-through">
+                                ${product ? product.price : "N/A"}
+                              </p>
                               <p className="text-red-700">: ${item.s_price}</p>
                             </div>
                           </div>
-                        :
-                        couponVal?.code ?
-                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(product.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(product.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></div>
-                        :
-                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
-                      }
-                      <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
-                      {item.qty >= item.s_qty ?
-                        couponVal?.code ?
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><div className="line-through">${item.qty * Number(product?.price)}</div><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></div>
-                          :
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></div>
-                        :
-                        couponVal?.code ?
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(product?.price) * (100 - couponVal?.discount) / 100}</p></div>
-                          :
-                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(product?.price)}</p>
-                      }
+                        )
+                      ) : couponVal?.code ? (
+                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                          <span className="flex sm:hidden font-bold mr-3">
+                            Price :{" "}
+                          </span>
+                          <p className="line-through">
+                            ${product ? Number(product.price) : "N/A"}
+                          </p>
+                          <p className="text-red-700">
+                            : $
+                            {product
+                              ? (Number(product.price) *
+                                  (100 - couponVal?.discount)) /
+                                100
+                              : "N/A"}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                          <span className="flex sm:hidden font-bold mr-3">
+                            Price :{" "}
+                          </span>
+                          ${product ? product.price : "N/A"}
+                        </p>
+                      )}
+                      <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                        <span className="flex sm:hidden font-bold mr-3">
+                          Qty :{" "}
+                        </span>
+                        {item.qty}
+                      </p>
+                      {item.qty >= item.s_qty ? (
+                        couponVal?.code ? (
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                            <span className="flex sm:hidden font-bold mr-3">
+                              Total :{" "}
+                            </span>
+                            <div className="line-through">
+                              ${item.qty * Number(product?.price)}
+                            </div>
+                            <p className="text-red-700">
+                              : $
+                              {(item.qty *
+                                Number(item.s_price) *
+                                (100 - couponVal?.discount)) /
+                                100}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                            <span className="flex sm:hidden font-bold mr-3">
+                              Total :{" "}
+                            </span>
+                            <p className="line-through">
+                              ${item.qty * Number(product?.price)}
+                            </p>
+                            <p className="text-red-700">
+                              : ${item.qty * Number(item.s_price)}
+                            </p>
+                          </div>
+                        )
+                      ) : couponVal?.code ? (
+                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                          <span className="flex sm:hidden font-bold mr-3">
+                            Total :{" "}
+                          </span>
+                          <p className="line-through">
+                            ${item.qty * Number(product?.price)}
+                          </p>
+                          <p className="text-red-700">
+                            : $
+                            {(item.qty *
+                              Number(product?.price) *
+                              (100 - couponVal?.discount)) /
+                              100}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]">
+                          <span className="flex sm:hidden font-bold mr-3">
+                            Total :{" "}
+                          </span>
+                          ${item.qty * Number(product?.price)}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-                  <div className="w-full mx-auto max-w-[1280]  float-right">
-                    <div className="w-full flex items-center justify-center lg:justify-end">
-                      
-                      <div className="mt-3">
-                        {
-                          couponVal?.code &&
-                          <>
-                            <div className="flex space-x-2">
-                              <p className="text-[14px] font-semibold">Discount : </p>
-                              <p className="text-[14px]"> ${couponVal?.discount} % off (-${(Number(subTotal)*(couponVal?.discount)/(100-couponVal?.discount)).toFixed(2)})</p>
-                            </div>
-                          </>
-                        }
-                        <div className="flex space-x-2 mt-6">
-                          <p className="text-[14px] font-semibold">Total : </p>
-                          <p className="text-[14px] text-red-700"> ${Number(subTotal).toFixed(2)}</p>
-                        </div>
-                        
-                      </div>
+          <div className="w-full mx-auto max-w-[1280]  float-right">
+            <div className="w-full flex items-center justify-center lg:justify-end">
+              <div className="mt-3">
+                {couponVal?.code && (
+                  <>
+                    <div className="flex space-x-2">
+                      <p className="text-[14px] font-semibold">Discount : </p>
+                      <p className="text-[14px]">
+                        {" "}
+                        ${couponVal?.discount} % off (-$
+                        {(
+                          (Number(subTotal) * couponVal?.discount) /
+                          (100 - couponVal?.discount)
+                        ).toFixed(2)}
+                        )
+                      </p>
                     </div>
-                  </div>
+                  </>
+                )}
+                <div className="flex space-x-2 mt-6">
+                  <p className="text-[14px] font-semibold">Total : </p>
+                  <p className="text-[14px] text-red-700">
+                    {" "}
+                    ${Number(subTotal).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
