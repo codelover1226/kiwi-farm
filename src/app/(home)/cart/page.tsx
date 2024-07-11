@@ -31,7 +31,7 @@ export default function About() {
     if (cartItems[i].qty >= cartItems[i].s_qty) {
       subtotal += cartItems[i].qty * Number(cartItems[i].s_price)
     }else{
-      subtotal += cartItems[i].qty * Number(product?.price)
+      subtotal += cartItems[i].qty * Number(cartItems[i]?.price)
     }
   }
   const router = useRouter();
@@ -95,21 +95,21 @@ export default function About() {
               <div className="w-full flex content-center mt-6 sm:mt-0">
                 {item.qty >= item.s_qty ?
                   <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
-                    <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                    <p className="text-gray-500">Save ${Number(item.price) - item.s_price} when buy {item.s_qty} or more</p>
                     <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
                       <span className="flex sm:hidden font-bold mr-3">Price : </span>
-                      <p className="line-through">${product? product.price : 'N/A'}</p>
+                      <p className="line-through">${product? item.price : 'N/A'}</p>
                       <p className="text-red-700">: ${item.s_price}</p>
                     </div>
                   </div>
                   :
-                  <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                  <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? item.price : 'N/A'}</p>
                 }
                 <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
                 {item.qty >= item.s_qty ?
-                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">$ {item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></p>
+                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">$ {item.qty * Number(item?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></p>
                   :
-                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(product?.price)}</p>
+                  <p className="w-full text-right content-center justify-end flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>$ {item.qty * Number(item?.price)}</p>
                 }
               </div>
             </div>

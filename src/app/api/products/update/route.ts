@@ -23,12 +23,10 @@ export async function POST(request : Request, params : {
     const formData = await request.formData();
     const imgUrl = await saveFile(formData, "imgFile");
     const user_id = formData.get("user_id");
-    const price = formData.get("price");
     const title = formData.get("title");
     const slug = formData.get("slug");
     const description = formData.get("description");
     const content = formData.get("content");
-    const quantity = formData.get("quantity");
     const type = formData.get("type");
     const id = formData.get("id");
     const image = formData.get("image") as string;
@@ -55,8 +53,6 @@ export async function POST(request : Request, params : {
                 slug,
                 description,
                 content,
-                price,
-                quantity,
                 type,
                 user_id,
                 image : imgUrl==""?image:imgUrl,

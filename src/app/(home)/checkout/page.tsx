@@ -57,8 +57,6 @@ export default function About() {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
-  
-
   let checkoutProducts = [];
   for (let i = 0; i < cartItems.length; i++) {
     let cProduct = _.cloneDeep(products.find(p=> p.id === cartItems[i].product_id));
@@ -92,7 +90,7 @@ export default function About() {
       if (cartItems[i].qty >= cartItems[i].s_qty) {
         subtotal1 += cartItems[i].qty * Number(cartItems[i].s_price)
       }else{
-        subtotal1 += cartItems[i].qty * Number(product?.price)
+        subtotal1 += cartItems[i].qty * Number(cartItems[i]?.price)
       }
     }
     setSubTotal(subtotal1);
@@ -173,13 +171,13 @@ export default function About() {
             if (cartItems[i].qty > cartItems[i].s_qty) {
               tempSub += cartItems[i].qty * Number(cartItems[i].s_price);
             }else{
-              tempSub += cartItems[i].qty * Number(product.price);
+              tempSub += cartItems[i].qty * Number(cartItems[i].price);
             }
           }else{
             if (cartItems[i].qty > cartItems[i].s_qty) {
               tempSub += (cartItems[i].qty * Number(cartItems[i].s_price) * (100 - jsonData[0].discount)) / 100;
             }else{
-              tempSub += (cartItems[i].qty * Number(product.price) * (100 - jsonData[0].discount)) / 100;
+              tempSub += (cartItems[i].qty * Number(cartItems[i].price) * (100 - jsonData[0].discount)) / 100;
             }
           }
         }
@@ -195,7 +193,7 @@ export default function About() {
         })
         for (let i = 0; i < cartItems.length; i++) {
           const product : IProduct = products.find(p => p.id === cartItems[i].product_id);
-          tempSub += cartItems[i].qty * Number(product.price);
+          tempSub += cartItems[i].qty * Number(cartItems[i].price);
         }
         setSubTotal(tempSub);
       }
@@ -586,39 +584,39 @@ export default function About() {
                       {item.qty >= item.s_qty ?
                         couponVal?.code ?
                           <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
-                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <p className="text-gray-500">Save ${Number(item.price) - item.s_price} when buy {item.s_qty} or more</p>
                             <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
                               <span className="flex sm:hidden font-bold mr-3">Price : </span>
-                              <p className="line-through">${product? product.price : 'N/A'}</p>
+                              <p className="line-through">${product? item.price : 'N/A'}</p>
                               <p className="text-red-700">: ${item.s_price * (100 - couponVal?.discount) / 100}</p>
                             </div>
                           </div>
                           :
                           <div className="w-full text-left content-center grid grid-rows-2 items-center text-xs sm:text-[16px]">
-                            <p className="text-gray-500">Save ${Number(product.price) - item.s_price} when buy {item.s_qty} or more</p>
+                            <p className="text-gray-500">Save ${Number(item.price) - item.s_price} when buy {item.s_qty} or more</p>
                             <div className="w-full text-left content-center items-center flex text-xs sm:text-[16px]">
                               <span className="flex sm:hidden font-bold mr-3">Price : </span>
-                              <p className="line-through">${product? product.price : 'N/A'}</p>
+                              <p className="line-through">${product? item.price : 'N/A'}</p>
                               <p className="text-red-700">: ${item.s_price}</p>
                             </div>
                           </div>
                         :
                         couponVal?.code ?
-                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(product.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(product.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></div>
+                        <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span><p className="line-through">${product? Number(item.price) : 'N/A'}</p><p className="text-red-700">: ${product? Number(item.price) * (100 - couponVal?.discount) /100 : 'N/A'}</p></div>
                         :
-                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? product.price : 'N/A'}</p>
+                        <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Price : </span>${product? item.price : 'N/A'}</p>
                       }
                       <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Qty : </span>{item.qty}</p>
                       {item.qty >= item.s_qty ?
                         couponVal?.code ?
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><div className="line-through">${item.qty * Number(product?.price)}</div><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></div>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><div className="line-through">${item.qty * Number(item?.price)}</div><p className="text-red-700">: ${item.qty * Number(item.s_price) * (100 - couponVal?.discount) / 100}</p></div>
                           :
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></div>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(item?.price)}</p><p className="text-red-700">: ${item.qty * Number(item.s_price)}</p></div>
                         :
                         couponVal?.code ?
-                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(product?.price)}</p><p className="text-red-700">: ${item.qty * Number(product?.price) * (100 - couponVal?.discount) / 100}</p></div>
+                          <div className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span><p className="line-through">${item.qty * Number(item?.price)}</p><p className="text-red-700">: ${item.qty * Number(item?.price) * (100 - couponVal?.discount) / 100}</p></div>
                           :
-                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(product?.price)}</p>
+                          <p className="w-full text-left content-center flex items-center text-xs sm:text-[16px]"><span className="flex sm:hidden font-bold mr-3">Total : </span>${item.qty * Number(item?.price)}</p>
                       }
                     </div>
                   </div>

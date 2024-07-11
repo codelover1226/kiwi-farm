@@ -25,7 +25,6 @@ export async function POST(req : Request) {
         const formData = await req.formData();
         const imgUrl = await saveFile(formData, "imgFile");
         const user_id = formData.get("user_id");
-        const price = formData.get("price");
         const title = formData.get("title");
         const slug = formData.get("slug");
         const description = formData.get("description");
@@ -42,7 +41,6 @@ export async function POST(req : Request) {
               slug,
               description,
               content,
-              price,
               quantity,
               type,
               user_id,

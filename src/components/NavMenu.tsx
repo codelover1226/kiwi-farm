@@ -66,9 +66,9 @@ export function NavMenu() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/extracts" legacyBehavior passHref>
+          <Link href="/concentrates" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Extracts
+              Concentrates
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -77,6 +77,14 @@ export function NavMenu() {
           <Link href="/pre-rolls" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Pre-Rolls
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link href="/miscellaneous" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Miscellaneous
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

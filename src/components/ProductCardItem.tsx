@@ -26,6 +26,7 @@ import './user.css'
 export interface CartProduct {
   product_id: string,
   flavor_name: string,
+  price: number,
   s_price: number,
   s_qty: number,
   qty: number
@@ -39,6 +40,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
   const isAdmin = useAppSelector(selectIsAdmin);
   const isAgency = useAppSelector(selectIsAgency);
   const isCart = useAppSelector(selectIsCart);
+  const [price, setPrice] = useState<number | null >(0);
 
   let heightCard = React.useMemo(()=> {
     if (isAgency || isAdmin || isCart) {
@@ -51,6 +53,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
     setMaxQty(product.flavor[event.target.value].qty);
+    setPrice(product.flavor[event.target.value].price);
     setQty(0);
   };
 
@@ -75,6 +78,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
     const newCartItem : CartProduct = {
       product_id: product.id,
       flavor_name : product.flavor[selectedOption].name,
+      price: product.flavor[selectedOption].price,
       s_price: product.s_coupon?.price,
       s_qty: product.s_coupon?.qty,
       qty: qty
@@ -106,7 +110,7 @@ export function ProductCardItem ({product, i}: {product: IProduct, i: number }) 
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
                 {(isAgency || isAdmin || isCart) && <div className='text-center'>
-                  <pre>price    : ${product.price}</pre>
+                  <pre>price    : ${price}</pre>
                 </div>}
                 <div className='text-sm font-normal text-center '>
                   {product.description}

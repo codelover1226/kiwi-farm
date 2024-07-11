@@ -47,11 +47,14 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
                 <Link href="/dashboard/edibles" className="block text-lg ml-5 p-2 hover:bg-slate-100">
                     Edibles
                 </Link>
-                <Link href="/dashboard/extracts" className="block text-lg ml-5 p-2 hover:bg-slate-100">
-                    Extracts
+                <Link href="/dashboard/concentrates" className="block text-lg ml-5 p-2 hover:bg-slate-100">
+                    Concentrates
                 </Link>
                 <Link href="/dashboard/pre-rolls" className="block text-lg ml-5 p-2 hover:bg-slate-100">
                     Pre-rolls
+                </Link>
+                <Link href="/dashboard/miscellaneous" className="block text-lg ml-5 p-2 hover:bg-slate-100">
+                    Miscellaneous
                 </Link>
 
                 {isVisitor?

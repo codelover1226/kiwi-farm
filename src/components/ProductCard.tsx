@@ -72,13 +72,13 @@ export function ProductCard({ product, user_id }: { product: string, user_id: st
               </div>
               <div className='w-full flex justify-between mt-3'>
                 <p className='text-xs font-bold'>
-                  ${lastProduct?.price}
+                  ${items[items.length-1]?.price}
                 </p>
                 <p className='text-xs font-bold'>
                   Quantity : {items[items.length-1]?.qty}
                 </p>
                 <p className='text-xs font-bold'>
-                Total: ${+ ((+lastProduct?.price?? 0) * (+items[items.length-1]?.qty?? 0))}
+                Total: ${+ ((+items[items.length-1]?.price?? 0) * (+items[items.length-1]?.qty?? 0))}
                 </p>
               </div>
               <div className='w-full flex text-center mt-3'>

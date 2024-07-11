@@ -13,6 +13,7 @@ export interface IProduct {
   quantity: string;
   flavor: [{
     name: string,
+    price: number,
     qty: number
   }];
   s_coupon: {

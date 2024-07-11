@@ -29,12 +29,16 @@ const components: { title: string; href: string }[] = [
     href: "/edibles",
   },
   {
-    title: "Extracts",
-    href: "/extracts",
+    title: "Concentrates",
+    href: "/concentrates",
   },
   {
     title: "Pre-Rolls",
     href: "/pre-rolls",
+  },
+  {
+    title: "Miscellaneous",
+    href: "/miscellaneous",
   },
   {
     title: "Our Story",

@@ -37,7 +37,6 @@ export const newProductSchema = z.object({
   description: z.string().min(1, { message: "description is required." }),
   content: z.string().min(1, { message: "description is required." }),
   image: z.string(),
-  quantity: z.number().min(0, { message: "quantity must be over 0." }),
   type: z.string().min(1, { message: "type is required." }),
   price: z.number(),
 });
@@ -63,6 +62,7 @@ export function NewProductForm() {
   useEffect(() => {
     if (selectedProduct == "-1") {
       form.reset();
+      setFlavor([]);
       setPreviewUrl("");
       setImgFile(null);
       return;
@@ -72,14 +72,13 @@ export function NewProductForm() {
       dispatch(setSelectedProduct("-1"));
       return;
     }
-    console.log(product);
+    console.log(product, "--->>>");
     form.setValue("title", product.title);
     form.setValue("slug", product.slug);
     form.setValue("description", product.description);
     form.setValue("type", product.type);
     form.setValue("image", product.image);
     form.setValue("price", Number(product.price));
-    form.setValue("quantity", Number(product.quantity));
     setFlavor(Array.isArray(product.flavor)? product.flavor : []);
 
     if (product.image) {
@@ -99,13 +98,13 @@ export function NewProductForm() {
       description: "",
       content: "default",
       image: "",
-      quantity: 0,
       price: 0,
       type: "flower"
     },
   });
 
   async function onSubmit(values: z.infer<typeof newProductSchema>) {
+    alert("OK");
     try {
       const formData = new FormData();
       formData.append("imgFile", imgFile);
@@ -130,6 +129,7 @@ export function NewProductForm() {
           form.setValue("description", "");
           form.setValue("type", null);
           form.setValue("image", "");
+          setFlavor([]);
           setImgFileName("");
           setPreviewUrl("");
           form.setValue("price", 0);
@@ -160,15 +160,6 @@ export function NewProductForm() {
     }
     setIsLoading(false);
   }
-
-  const handleChangeQuantity = (event: any) => {
-    console.log(event.target.value);
-    const value = Number.parseInt(event.target.value);
-    if (value < 0) {
-      return;
-    }
-    form.setValue("quantity", value);
-  };
 
   const handleChangeType = (type: string) => {
     form.setValue("type", type);
@@ -222,11 +213,13 @@ export function NewProductForm() {
       const newFlavor = {
         name: flavor_name,
         qty: flavor_qty,
+        price: form.getValues('price')
       };
     
       setFlavor([...flavor, newFlavor]);
     
       setFlavorName('');
+      form.setValue('price', 0);
       setFlavorQty(0);
     }
   };
@@ -238,11 +231,7 @@ export function NewProductForm() {
       return newFlavor;
     });
   };  
-  const handleCouponDelete = (event: any, indexToDelete: number) => {
-    event.preventDefault();
-    console.log('Deleting coupon at index:', indexToDelete); // Debugging line
 
-  }; 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex py-5 mb-0 justify-center lg:px-20 xl:px-40">
@@ -339,71 +328,6 @@ export function NewProductForm() {
             <div className="mt-0 w-full min-w-[128px]">
               <FormField
                 control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem className="flex w-full flex-wrap justify-center gap-3">
-                    <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                      Price :
-                    </FormLabel>
-                    <FormControl
-                      className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
-                      style={{
-                        marginTop: 0,
-                      }}
-                    >
-                      <div>
-                        <CurrencyInput
-                          placeholder="Please enter a number"
-                          defaultValue={1000}
-                          decimalsLimit={2}
-                          value={field.value}
-                          prefix="$"
-                          className="flex h-9 w-full rounded-md border border-input px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 bg-white mt-0"
-                          onValueChange={(value, name, values) =>
-                            handleChangePrice({ value, name, values })
-                          }
-                        />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="mt-0 w-full min-w-[128px]">
-              <FormField
-                control={form.control}
-                name="quantity"
-                render={({ field }) => (
-                  <FormItem className="flex w-full flex-wrap justify-center gap-3">
-                    <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
-                      Quantity :
-                    </FormLabel>
-                    <FormControl
-                      className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
-                      style={{
-                        marginTop: 0,
-                      }}
-                    >
-                      <div>
-                        <Input
-                          maxLength={40}
-                          type="number"
-                          className="bg-white mt-0"
-                          placeholder="Quantity"
-                          onChange={handleChangeQuantity}
-                          value={field.value}
-                        />
-                        <FormMessage className="absolute" />
-                      </div>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="mt-0 w-full min-w-[128px]">
-              <FormField
-                control={form.control}
                 name="image"
                 render={({ field }) => {
                   return (
@@ -456,9 +380,37 @@ export function NewProductForm() {
                     onChange={handleInputChange}
                     id="fn"
                   />
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem className="flex w-[15px] sm:w-[60px] flex-wrap justify-center">
+                        <FormControl
+                          className="w-[15px] sm:w-[60px]"
+                          style={{
+                            marginTop: 0,
+                          }}
+                        >
+                          <div>
+                            <CurrencyInput
+                              placeholder="Please enter a number"
+                              defaultValue={1000}
+                              decimalsLimit={2}
+                              value={Number.isNaN(field.value)? 0: field.value}
+                              prefix="$"
+                              className="flex h-9 w-full rounded-md border border-input text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 bg-white mt-0"
+                              onValueChange={(value, name, values) =>
+                                handleChangePrice({ value, name, values })
+                              }
+                            />
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <Input
                     type="number"
-                    className="bg-white mt-0 w-[30px] sm:w-[80px]"
+                    className="bg-white mt-0 w-[15px] sm:w-[60px]"
                     placeholder="Qty"
                     value={flavor_qty}
                     min={0}
@@ -485,10 +437,13 @@ export function NewProductForm() {
                 <div className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px]">
                   {Array.isArray(flavor) && flavor.map((item, index) => (
                     <div key={index} className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
-                      <div className="bg-white w-full place-content-center">
+                      <div className="bg-white w-full place-content-center pl-3 rounded-sm text-sm">
                         {item.name}
                       </div>
-                      <div className="bg-white mt-0 w-[30px] sm:w-[80px] place-content-center">
+                      <div className="bg-white mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
+                        {item.price}
+                      </div>
+                      <div className="bg-white mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
                         {item.qty}
                       </div>
                       <Button
