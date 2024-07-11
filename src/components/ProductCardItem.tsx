@@ -28,29 +28,22 @@ import { toast } from "react-hot-toast";
 
 import "./user.css";
 export interface CartProduct {
-<<<<<<< HEAD
   product_id: string,
   flavor_name: string,
   price: number,
   s_price: number,
   s_qty: number,
   qty: number
-=======
-  product_id: string;
-  flavor_name: string;
-  s_price: number;
-  s_qty: number;
-  qty: number;
->>>>>>> 4f806ea457b6bf5477a095c5cefc333250b2d24f
 }
 
 export function ProductCardItem({
-  product,
-  i,
-}: {
-  product: IProduct;
-  i: number;
-}) {
+    product,
+    i,
+  }: {
+    product: IProduct;
+    i: number;
+  }) 
+{
   const [qty, setQty] = useState<number | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [maxQty, setMaxQty] = useState<number | null>(0);
@@ -94,12 +87,8 @@ export function ProductCardItem({
     }
     const newCartItem: CartProduct = {
       product_id: product.id,
-<<<<<<< HEAD
       flavor_name : product.flavor[selectedOption].name,
       price: product.flavor[selectedOption].price,
-=======
-      flavor_name: product.flavor[selectedOption].name,
->>>>>>> 4f806ea457b6bf5477a095c5cefc333250b2d24f
       s_price: product.s_coupon?.price,
       s_qty: product.s_coupon?.qty,
       qty: qty,
@@ -128,7 +117,6 @@ export function ProductCardItem({
               {product.title}
             </CardTitle>
           </CardHeader>
-<<<<<<< HEAD
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
                 {(isAgency || isAdmin || isCart) && <div className='text-center'>
@@ -136,15 +124,7 @@ export function ProductCardItem({
                 </div>}
                 <div className='text-sm font-normal text-center '>
                   {product.description}
-=======
-          <CardContent className="text-xl">
-            <CardDescription className="text-lg text-start font-bold px-4">
-              {(isAgency || isAdmin || isCart) && (
-                <div className="text-center  text-green-600">
-                  <pre>Price: ${product.price}</pre>
->>>>>>> 4f806ea457b6bf5477a095c5cefc333250b2d24f
                 </div>
-              )}
               <div className="text-sm font-normal text-center ">
                 {product.description}
               </div>

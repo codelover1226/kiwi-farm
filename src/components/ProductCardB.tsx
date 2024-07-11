@@ -39,7 +39,7 @@ export function ProductCardB (props: any) {
   return (
     <div className='flex flex-row flex-wrap gap-6 justify-center m-2'>
       
-      {products.length!=0?products.map((product: IProduct, i: number) => {
+      {products.length!== 0 ?products.map((product: IProduct, i: number) => {
           return (
             <Dialog key={'dialog' + i}>
             <DialogTrigger>
@@ -96,7 +96,9 @@ export function ProductCardB (props: any) {
           )
         }
       )
-    :<div className='text-red-400'>No items</div>}
+      :
+      <div className='text-red-400'>No items</div>
+    }
     </div>
   );
 };

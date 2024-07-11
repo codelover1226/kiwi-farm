@@ -104,7 +104,6 @@ export function NewProductForm() {
   });
 
   async function onSubmit(values: z.infer<typeof newProductSchema>) {
-    alert("OK");
     try {
       const formData = new FormData();
       formData.append("imgFile", imgFile);
