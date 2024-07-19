@@ -11,8 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { selectUser, selectIsAdmin, selectIsAgency, selectIsCart } from "@/store/features/auth/authSlice";
-import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
-import { IProduct } from "@/store/features/products/productsAPI";
 export function NavBar({backend}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -27,7 +25,6 @@ export function NavBar({backend}) {
   
   const user = useAppSelector(selectUser);
   useEffect(()=>{
-    dispatch(getProducts({ type: "all", user: user.id }));
     const handleStorageChange = () => {
       const cartItems = JSON.parse(localStorage.getItem("cartItems"));
       if (cartItems) {

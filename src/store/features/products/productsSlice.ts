@@ -28,7 +28,6 @@ export const productsSlice = createAppSlice({
   reducers: (create) => ({
     getProducts: create.asyncThunk(
       async ({type, user}:{type:string, user:string}) => {
-        console.log(type, user)
         const response = await fetchProducts({type, user});
         return response;
       },

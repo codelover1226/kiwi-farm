@@ -10,8 +10,6 @@ const resend = new Resend(process.env.EMAIL_API_KEY);
 export async function POST(request: Request) {
   const body: TNewMemberSchema = await request.json();
 
-  console.log(body);
-
   try {
     const data = await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',

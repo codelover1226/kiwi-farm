@@ -10,7 +10,6 @@ import {
 import { useAppSelector } from "@/store/hooks";
 
 export default function BackEndLayout({ children }: {children: React.ReactNode}) {
-  console.log("BackEnd layout")
   const isLogin = useAppSelector(selectIslogin); 
   return (    
         <div >

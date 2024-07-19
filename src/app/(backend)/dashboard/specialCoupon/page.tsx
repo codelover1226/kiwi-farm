@@ -72,7 +72,6 @@ export default function Home() {
         price: Number(form.getValues("price")),
         qty: Number(form.getValues("quantify")),
       };
-      console.log(temp);
       const formData = new FormData();
       Object.keys(temp).map((key, index) => {
         if (key === "flavor" || key === "s_coupon") {

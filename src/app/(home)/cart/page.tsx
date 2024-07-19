@@ -21,7 +21,7 @@ export default function About() {
   }
 
   useEffect(() => {
-    dispatch(getProducts({ type: "all", user: user_id1 }));
+    dispatch(getProducts({ type: "all", user: "12" }));
   }, [user.id]);
   
   const products: IProduct[] = useAppSelector(selectProducts);

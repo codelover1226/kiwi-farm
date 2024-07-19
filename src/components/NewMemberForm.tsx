@@ -69,7 +69,6 @@ export function NewMemberForm() {
   async function onSubmit(values: z.infer<typeof newMemberSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
 
     try {
       const response = await fetch("/api/email", {
@@ -82,7 +81,6 @@ export function NewMemberForm() {
 
       return response.json().then(() => router.push("/thank-you"));
     } catch (error) {
-      console.log(error);
     }
   }
 

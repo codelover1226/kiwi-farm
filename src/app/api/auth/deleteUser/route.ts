@@ -10,7 +10,6 @@ export async function POST(request : Request, params : {
     } = await request.json();
     const userid = req.userid;
     try {
-        console.log(userid)
         const {error} = await supabase
             .from('users')
             .delete()

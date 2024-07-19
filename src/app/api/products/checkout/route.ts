@@ -12,7 +12,6 @@ async function deductProductQuantities(cartItems) {
   try {
     for (const item of cartItems) {
       const product = products.find(p => p.id === item.product_id);
-      console.log(product.quantity - item.qty)
       if (product.quantity < item.qty){
         return NextResponse.json("Products are not enough.")
       }
@@ -30,7 +29,6 @@ async function deductProductQuantities(cartItems) {
   }
 }
 async function sendEmail(to, subject, html, apiKey) {
-  console.log(subject,html)
   try {
     const response = await axios.post('https://api.resend.com/emails', {
       from: 'Acme <onboarding@resend.dev>', 

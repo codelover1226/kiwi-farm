@@ -14,7 +14,6 @@ export async function POST(request : Request, params : {
     const password = req.password;
     const password1 = req.password1;
     try {
-        console.log(userid)
         const {error} = await supabase
             .from('users')
             .update({

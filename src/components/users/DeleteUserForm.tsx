@@ -120,7 +120,6 @@ export function DeleteUserForm({ user }:{ user:string }) {
   }
 
   function handleInputChange(v){
-    console.log(v);
     setFormData({
      ...formData,
       ["userid"]: v

@@ -5,7 +5,6 @@ import supabase from '@/supabase/supabaseClient';
 export async function POST(request : Request, params : {  action: string }) {
   const formData = await request.formData();
   const id = formData.get('id');
-  console.log(id)
   try {
     if (id == "all") {
       const {data, error} = await supabase

@@ -13,7 +13,6 @@ type Props = {
 export default async function UserPage({ params }: Props) {
   const slug = params.user;
   const user = await getUser(slug);
-  // console.log(user);
 
   const cookiesStore = cookies();
   const loginCookies = cookiesStore.get(slug);

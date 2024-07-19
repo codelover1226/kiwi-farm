@@ -2,7 +2,6 @@ import {NextResponse, NextRequest} from 'next/server';
 import supabase from '@/supabase/supabaseClient';
 
 export async function POST(req : Request) {
-  console.log(req)
   try {
     const formData = await req.formData();
     const code = formData.get("code");

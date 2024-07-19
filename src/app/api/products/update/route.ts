@@ -36,13 +36,10 @@ export async function POST(request : Request, params : {
     const s_coupon = couponString? JSON.parse(couponString as string) : null;     
 
     if(imgUrl != ""){
-        console.log("fileName : " + image.split('/').pop());
         const {data, error} = await supabase.storage.from('products').remove([image.split('/').pop()]);
         if(error){
             console.error("can't delete file.\n" + error)
         }else{
-            console.log("File deleted successfully\n" + data);
-            console.log(data);
         }
     }
     try {

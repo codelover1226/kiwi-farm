@@ -72,7 +72,6 @@ export function NewProductForm() {
       dispatch(setSelectedProduct("-1"));
       return;
     }
-    console.log(product, "--->>>");
     form.setValue("title", product.title);
     form.setValue("slug", product.slug);
     form.setValue("description", product.description);
@@ -226,7 +225,6 @@ export function NewProductForm() {
     event.preventDefault()
     setFlavor(prevFlavor => {
       const newFlavor = prevFlavor.filter((_, index) => index!== indexToDelete);
-      console.log('New flavor array:', newFlavor);
       return newFlavor;
     });
   };  

@@ -147,7 +147,7 @@ export function ProductCardItem({
                 {product.flavor &&
                   product.flavor.map((item, index) => (
                     <option key={index} value={index}>
-                      {item.name}
+                      {item.name} - ${item.price}
                     </option>
                   ))}
               </select>

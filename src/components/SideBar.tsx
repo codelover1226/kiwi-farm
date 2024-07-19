@@ -11,7 +11,6 @@ export function SideBar({isAdmin, isActive, handleMenuClick}:
     })
 {
     const user = useAppSelector(selectUser);
-    console.log(user, "-->>");
     const isVisitor = useAppSelector(selectIsVisitor);
     const isAgency = useAppSelector(selectIsAgency);
     const className1 = isActive ? "w-[300px] z-50":"w-0";

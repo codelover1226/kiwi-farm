@@ -23,7 +23,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Input } from "@/components/ui/input";
 import { toast } from 'react-hot-toast';
 import { setSelectedProduct } from '@/store/features/products/productsSlice';
-import { redirect } from 'next/navigation';
 import { useRouter } from "next/navigation";
 
 export default function Popup1() {

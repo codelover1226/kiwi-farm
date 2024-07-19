@@ -30,7 +30,6 @@ export function NavMenu() {
       router.push('/dashboard');
     }
     router.push("/login");
-    // console.log("handleLogin");
   }
 
   const handleLogout = () => {

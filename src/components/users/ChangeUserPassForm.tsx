@@ -40,7 +40,6 @@ export function ChangeUserPassForm() {
       password1: "",
     },
   });
-  // console.log(form)
 
   async function onSubmit(values: z.infer<typeof changeUserPassSchema>) {
     try {
@@ -55,7 +54,6 @@ export function ChangeUserPassForm() {
           "Content-Type": "application/json",
         },
       });
-      // console.log(response);
       if (response.status === 200) {
         toast.success("You changed your password!.");
       } else {
@@ -65,7 +63,6 @@ export function ChangeUserPassForm() {
       }
     } catch (error) {
       toast.error(error.message);
-      console.log(error);
     }
   }
 

@@ -31,7 +31,6 @@ export function ProductCardB (props: any) {
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
-  console.log(products, "--->>>");
   useEffect(() => {
     dispatch(getProducts({type:product, user:user.id }));
   },[])
