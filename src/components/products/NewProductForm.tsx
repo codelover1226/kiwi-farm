@@ -244,7 +244,7 @@ export function NewProductForm() {
                       Name :
                     </FormLabel>
                     <FormControl
-                      className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -273,7 +273,7 @@ export function NewProductForm() {
                       Description :
                     </FormLabel>
                     <FormControl
-                      className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -301,7 +301,7 @@ export function NewProductForm() {
                       Type :
                     </FormLabel>
                     <FormControl
-                      className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -333,7 +333,7 @@ export function NewProductForm() {
                         Image :
                       </FormLabel>
                       <FormControl
-                        className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                        className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
                         style={{
                           marginTop: 0,
                         }}
@@ -368,10 +368,10 @@ export function NewProductForm() {
                 <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
                   Flavor :
                 </FormLabel>
-                <div className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] flex space-x-2">
+                <div className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] flex space-x-1">
                   <Input
                     type="text"
-                    className="bg-white mt-0"
+                    className="bg-white mt-0 sm:w-full w-full"
                     placeholder="Flavor"
                     value={flavor_name}
                     onChange={handleInputChange}
@@ -381,9 +381,9 @@ export function NewProductForm() {
                     control={form.control}
                     name="price"
                     render={({ field }) => (
-                      <FormItem className="flex w-[15px] sm:w-[60px] flex-wrap justify-center">
+                      <FormItem className="flex w-full sm:w-[60px] flex-wrap justify-center">
                         <FormControl
-                          className="w-[15px] sm:w-[60px]"
+                          className="w-full sm:w-[60px]"
                           style={{
                             marginTop: 0,
                           }}
@@ -407,7 +407,7 @@ export function NewProductForm() {
                   />
                   <Input
                     type="number"
-                    className="bg-white mt-0 w-[15px] sm:w-[60px]"
+                    className="bg-white mt-0 w-full sm:w-[60px]"
                     placeholder="Qty"
                     value={flavor_qty}
                     min={0}
@@ -431,7 +431,7 @@ export function NewProductForm() {
                 </FormLabel> : <></>
                 }
                 
-                <div className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px]">
+                <div className="w-full sm:w-6/12 min-w-[128px] max-w-[350px]">
                   {Array.isArray(flavor) && flavor.map((item, index) => (
                     <div key={index} className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
                       <div className="bg-white w-full place-content-center pl-3 rounded-sm text-sm">
