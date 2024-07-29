@@ -23,6 +23,7 @@ const newCouponSchema = z.object({
   product: z.number().min(0, { message: "Product is required." }),
   quantify: z.number().min(0, { message: "Quantity must be over 0." }),
   price: z.number().min(0, { message: "Discount must be over 0." }),
+  flavor: z.string().min(1, { message: "Flavor is required." }),
 });
 
 export interface ICoupons {
@@ -30,6 +31,7 @@ export interface ICoupons {
   quantify: number;
   product: Array<{ product: string; price: number }>;
   price: number;
+  flavor: string;
 }
 
 export default function Home() {
@@ -37,6 +39,7 @@ export default function Home() {
   const [id, setId] = useState<string | null>("all");
   const [selectedProduct, setSelectedProduct] = useState<string | null>("");
   const dispatch = useAppDispatch();
+  const [product, setProduct] = useState(null);
   const products = useAppSelector(selectProducts);
 
   const form = useForm<z.infer<typeof newCouponSchema>>({
@@ -45,14 +48,22 @@ export default function Home() {
       product: 0,
       quantify: 0,
       price: 0,
+      flavor: ""
     },
   });
+
+  useEffect(() => {
+    dispatch(getProducts({ type: "all", user: "12" }));
+  }, []);
 
   const handleChange = (event: any) => {
     setSelectedProduct(event.target.value);
     let product = products.find(
       (p) => Number(p.id) === Number(event.target.value)
     ).s_coupon;
+    setProduct(products.find(
+      (p) => Number(p.id) === Number(event.target.value)
+    ));
     if (Number(selectedProduct) !== -1) {
       form.setValue("price", Number(product?.price || 0));
       form.setValue("quantify", Number(product?.qty || 0));
@@ -62,19 +73,29 @@ export default function Home() {
     }
   };
 
+  const handleFlavor = (event: any) => {
+    form.setValue("flavor", event.target.value);
+  }
+
   async function onSubmit(values: z.infer<typeof newCouponSchema>) {
     try {
       setIsLoading(true);
       let temp = _.cloneDeep(
         products.find((p) => Number(p.id) === Number(selectedProduct))
       );
-      temp.s_coupon = {
-        price: Number(form.getValues("price")),
-        qty: Number(form.getValues("quantify")),
-      };
+      let flavorTemp = temp.flavor;
+      for (let i = 0; i < flavorTemp.length; i++) {
+        if (flavorTemp[i].name === form.getValues("flavor")) {
+          flavorTemp[i].s_coupon = {
+            price: Number(form.getValues("price")),
+            qty: Number(form.getValues("quantify")),
+          };
+        }
+      }
+      temp.flavor = flavorTemp;
       const formData = new FormData();
       Object.keys(temp).map((key, index) => {
-        if (key === "flavor" || key === "s_coupon") {
+        if (key === "flavor") {
           formData.append(key, JSON.stringify(temp[key]));
         } else {
           formData.append(key, temp[key]);
@@ -100,7 +121,7 @@ export default function Home() {
 
   const priceChange = (event: any) => {
     const value = parseInt(event.target.value);
-    if (value < 0 || value > 100) {
+    if (value < 0 || value > 1000) {
       return;
     }
     form.setValue("price", value);
@@ -137,7 +158,7 @@ export default function Home() {
                       name="product"
                       render={({ field }) => (
                         <FormItem className="flex w-full flex-wrap justify-center gap-3">
-                          <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
+                          <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center mt-4">
                             Product :
                           </FormLabel>
                           <FormControl
@@ -148,7 +169,7 @@ export default function Home() {
                           >
                             <div>
                               <select
-                                className="mx-0 w-full bg-white text-sm py-2 my-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md"
+                                className="mx-0 w-full bg-white text-sm py-2 mt-4 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md"
                                 value={selectedProduct}
                                 onChange={handleChange}
                               >
@@ -160,6 +181,45 @@ export default function Home() {
                                     {item.title}
                                   </option>
                                 ))}
+                              </select>
+                              <FormMessage className="absolute" />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-0 w-full min-w-[128px]">
+                    <FormField
+                      control={form.control}
+                      name="flavor"
+                      render={({ field }) => (
+                        <FormItem className="flex w-full flex-wrap justify-center gap-3">
+                          <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
+                            Flavor :
+                          </FormLabel>
+                          <FormControl
+                            className="w-8/12 sm:w-6/12 min-w-[128px] max-w-[350px] "
+                            style={{
+                              marginTop: 0,
+                            }}
+                          >
+                            <div>
+                              <select
+                                className="mx-0 w-full bg-white text-sm py-2 shadow-sm focus-visible:outline-none bg-transparent border-[1px] rounded-md"
+                                value={form.getValues("flavor")}
+                                onChange={handleFlavor}
+                              >
+                                <option value="" disabled>
+                                  Select Flavor
+                                </option>
+                                { 
+                                  product?.flavor?.map((item, index) => (
+                                    <option key={index} value={item.name}>
+                                      {item.name}
+                                    </option>
+                                  ))
+                                }
                               </select>
                               <FormMessage className="absolute" />
                             </div>
@@ -218,7 +278,6 @@ export default function Home() {
                               <Input
                                 type="number"
                                 min={0}
-                                max={100}
                                 className="bg-white mt-0"
                                 onChange={priceChange}
                                 value={field.value}

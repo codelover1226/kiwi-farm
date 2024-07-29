@@ -82,7 +82,7 @@ const PasswordPromptDialog = () => {
           }));
           dispatch(setIsVisitor(password === user.password1));
           dispatch(setCart(true));
-          push('/menulist');
+          push('/');
         }
       };
     } catch (error) {

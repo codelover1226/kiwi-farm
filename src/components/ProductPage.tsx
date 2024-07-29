@@ -1,4 +1,5 @@
 'use client'
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -6,8 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
+import NavigationIcon from '@mui/icons-material/Navigation';
+import Drawer from '@mui/material/Drawer';
+import MenuList from './MenuList';
 
 export default function ProductPage() {
+  const [open, setOpen] = React.useState(false);
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
   
   const categories = [
     {
@@ -19,11 +29,15 @@ export default function ProductPage() {
       image: '/kiwi_farms_edibles.jpg',
     },
     {
-      title: 'extracts',
+      title: 'concentrates',
       image: '/kiwi_farms_extracts.jpg',
     },
     {
       title: 'pre-rolls',
+      image: '/kiwi_canna_prerolls.jpg',
+    },
+    {
+      title: 'miscellaneous',
       image: '/kiwi_canna_prerolls.jpg',
     },
   ];
@@ -75,10 +89,16 @@ export default function ProductPage() {
         <div className='flex flex-row flex-wrap gap-6 justify-center m-2'>
           {categoriesRender}
         </div>
+        <Box sx={{ '& > :not(style)': { m: 1 } }} className="w-full flex justify-end sm:mr-[250px] mt-[50px]">
+          <Fab variant="extended" color="primary" className='w-[150px] bg-green-700 text-white' onClick={toggleDrawer(true)}>
+            <NavigationIcon sx={{ mr: 1 }} />
+              Price List
+          </Fab>
+        </Box>
       </div>
-      {/* :
-      <MenuList />
-    } */}
+      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right" sx={{ width: "100%" }}>
+        <MenuList />
+      </Drawer>
   </div>
   );
 }

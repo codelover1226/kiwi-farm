@@ -51,11 +51,12 @@ export function ProductCardItem({
   const isAdmin = useAppSelector(selectIsAdmin);
   const isAgency = useAppSelector(selectIsAgency);
   const isCart = useAppSelector(selectIsCart);
+  const [coupon, setCoupon] = useState(null);
   const [price, setPrice] = useState<number | null >(0);
 
   let heightCard = React.useMemo(() => {
     if (isAgency || isAdmin || isCart) {
-      return `max-w-sm h-[630px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
+      return `max-w-sm h-[576px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     } else {
       return `max-w-sm h-[576px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     }
@@ -65,6 +66,7 @@ export function ProductCardItem({
     setSelectedOption(event.target.value);
     setMaxQty(product.flavor[event.target.value].qty);
     setPrice(product.flavor[event.target.value].price);
+    setCoupon(product.flavor[event.target.value].s_coupon);
     setQty(0);
   };
 
@@ -89,8 +91,8 @@ export function ProductCardItem({
       product_id: product.id,
       flavor_name : product.flavor[selectedOption].name,
       price: product.flavor[selectedOption].price,
-      s_price: product.s_coupon?.price,
-      s_qty: product.s_coupon?.qty,
+      s_price: coupon?.price,
+      s_qty: coupon?.qty,
       qty: qty,
     };
 
@@ -100,6 +102,18 @@ export function ProductCardItem({
     window.dispatchEvent(new Event("storage"));
     toast.success("You just added an item successfully");
   };
+
+  function truncateWithEllipsis(str, initialLimit = 60, finalLimit = 100) {
+    if (str.length <= initialLimit) {
+      return str;
+    }
+  
+    let truncatedStr = str.slice(0, initialLimit);
+    if (str.length >= finalLimit) {
+      truncatedStr = str.slice(0, finalLimit - 3) + '...';
+    }
+    return truncatedStr;
+  }
 
   return (
     <div>
@@ -122,11 +136,8 @@ export function ProductCardItem({
                 {(isAgency || isAdmin || isCart) && <div className='text-center'>
                   <pre>price    : ${price}</pre>
                 </div>}
-                <div className='text-sm font-normal text-center '>
-                  {product.description}
-                </div>
               <div className="text-sm font-normal text-center ">
-                {product.description}
+                {truncateWithEllipsis(product.description)}
               </div>
             </CardDescription>
           </CardContent>
@@ -190,17 +201,20 @@ export function ProductCardItem({
           </button>
         </div>
       )}
-      <DialogContent className="" style={{ scrollbarWidth: "none" }}>
+      <DialogContent className="w-[300px] h-[500px]" style={{ scrollbarWidth: "auto" }}>
         <DialogHeader>
           <DialogTitle className="text-center">{product.title}</DialogTitle>
           <DialogDescription>
             <Image
               className="w-full bg-white rounded-full aspect-square object-cover"
-              src={product.image ? product.image : "asdf"}
-              alt="grass"
+              src={product.image ? product.image : "null"}
+              alt="Null"
               width={300}
               height={300}
             />
+            <div className="text-sm font-normal text-center ">
+              {product.description}
+            </div>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
