@@ -12,6 +12,7 @@ import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import Drawer from '@mui/material/Drawer';
 import MenuList from './MenuList';
+import { Button, List, ListItem, ListItemText } from '@mui/material';
 
 export default function ProductPage() {
   const [open, setOpen] = React.useState(false);
@@ -96,8 +97,20 @@ export default function ProductPage() {
           </Fab>
         </Box>
       </div>
-      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right" sx={{ width: "100%" }}>
-        <MenuList />
+      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right" 
+        sx={{
+            '& .MuiDrawer-paper': {
+              width: '100%', // Full width
+              height: '100%', // Full height
+            },
+          }}
+      >
+        <List>
+          <MenuList />
+          <ListItem button onClick={toggleDrawer(false)} className='max-w-[600px] m-auto mb-5 border-2 border-gray-300'>
+            <ListItemText primary="Close Drawer" className='text-center' />
+          </ListItem>
+        </List>
       </Drawer>
   </div>
   );
