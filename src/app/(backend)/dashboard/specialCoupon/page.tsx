@@ -58,23 +58,26 @@ export default function Home() {
 
   const handleChange = (event: any) => {
     setSelectedProduct(event.target.value);
-    let product = products.find(
-      (p) => Number(p.id) === Number(event.target.value)
-    ).s_coupon;
     setProduct(products.find(
       (p) => Number(p.id) === Number(event.target.value)
     ));
-    if (Number(selectedProduct) !== -1) {
-      form.setValue("price", Number(product?.price || 0));
-      form.setValue("quantify", Number(product?.qty || 0));
-    } else {
-      form.setValue("price", 0);
-      form.setValue("quantify", 0);
-    }
+    form.setValue("price", 0);
+    form.setValue("quantify", 0);
+    form.setValue("flavor", "");
   };
 
   const handleFlavor = (event: any) => {
     form.setValue("flavor", event.target.value);
+    let product = (products.find(
+      (p) => Number(p.id) === Number(selectedProduct)
+    ).flavor).find(p=> p.name === event.target.value);
+    if (Number(selectedProduct) !== -1) {
+      form.setValue("price", Number(product?.s_coupon?.price || 0));
+      form.setValue("quantify", Number(product?.s_coupon?.qty || 0));
+    } else {
+      form.setValue("price", 0);
+      form.setValue("quantify", 0);
+    }
   }
 
   async function onSubmit(values: z.infer<typeof newCouponSchema>) {

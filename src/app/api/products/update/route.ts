@@ -32,8 +32,6 @@ export async function POST(request : Request, params : {
     const image = formData.get("image") as string;
     const flavorString = formData.get("flavor");
     const flavor = flavorString? JSON.parse(flavorString as string) : null;
-    const couponString = formData.get("s_coupon");
-    const s_coupon = couponString? JSON.parse(couponString as string) : null;     
 
     if(imgUrl != ""){
         const {data, error} = await supabase.storage.from('products').remove([image.split('/').pop()]);
@@ -53,8 +51,7 @@ export async function POST(request : Request, params : {
                 type,
                 user_id,
                 image : imgUrl==""?image:imgUrl,
-                flavor,
-                s_coupon
+                flavor
             })
             .eq("id", id)
 

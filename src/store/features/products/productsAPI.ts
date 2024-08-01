@@ -12,14 +12,11 @@ export interface IProduct {
   user_id: string;
   quantity: string;
   flavor: [{
+    s_coupon: { price: number; qty: number; };
     name: string,
     price: number,
     qty: number
   }];
-  s_coupon: {
-    price: number,
-    qty: number
-  };
 }
 
 export const fetchProducts = async ({type, user}:{type:string, user:string}) => {
