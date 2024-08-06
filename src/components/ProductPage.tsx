@@ -10,7 +10,8 @@ import {
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import Drawer from '@mui/material/Drawer';
+import { Drawer, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import MenuList from './MenuList';
 import { Button, List, ListItem, ListItemText } from '@mui/material';
 
@@ -91,7 +92,14 @@ export default function ProductPage() {
           {categoriesRender}
         </div>
         <Box sx={{ '& > :not(style)': { m: 1 } }} className="w-full flex justify-end sm:mr-[250px] mt-[50px]">
-          <Fab variant="extended" color="primary" className='w-[150px] bg-green-700 text-white' onClick={toggleDrawer(true)}>
+          <Fab variant="extended" color="primary" className='w-[150px] bg-green-700 text-white' onClick={toggleDrawer(true)}
+            style={{
+              position: 'fixed',
+              bottom: '50px',
+              right: '20px',
+              zIndex: 1000,
+            }}
+          >
             <NavigationIcon sx={{ mr: 1 }} />
               Price List
           </Fab>
@@ -105,12 +113,17 @@ export default function ProductPage() {
             },
           }}
       >
-        <List>
+        <Box
+          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', padding: 2 }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <IconButton onClick={toggleDrawer(false)}>
+            <CloseIcon />
+          </IconButton>
           <MenuList />
-          <ListItem button onClick={toggleDrawer(false)} className='max-w-[600px] m-auto mb-5 border-2 border-gray-300'>
-            <ListItemText primary="Close Drawer" className='text-center' />
-          </ListItem>
-        </List>
+        </Box>
       </Drawer>
   </div>
   );

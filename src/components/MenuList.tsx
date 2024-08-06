@@ -81,7 +81,7 @@ export default function MenuList() {
   }, [convertedText]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center">
+    <main className="flex min-h-screen flex-col items-center m-auto">
       
       <div className="mt-16 flex xs:px-5 md:px-10 mx-10 xs:min-w-full md:min-w-[600px] max-w-[600px] justify-left text-left rounded-sm py-16 flex-col border-2 mb-5 border-gray-500">
         {reactElement}

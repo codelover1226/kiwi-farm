@@ -29,7 +29,7 @@ import {
 import { CustomSelect } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-const types = ["flower", "edible", "extract", "pre-role"];
+const types = ["flower", "edible", "extract", "pre-roles", "Miscellanous"];
 
 export const newProductSchema = z.object({
   title: z.string().min(1, { message: "title is required." }),
@@ -432,6 +432,20 @@ export function NewProductForm() {
                 }
                 
                 <div className="w-full sm:w-6/12 min-w-[128px] max-w-[350px]">
+                  {/* {
+                    flavor.length !== 0 && 
+                    <div className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
+                      <div className="w-[200px] place-content-center pl-3 rounded-sm text-sm">
+                        Flavor
+                      </div>
+                      <div className="mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
+                        Price
+                      </div>
+                      <div className="mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
+                        QTY
+                      </div>
+                    </div>
+                  } */}
                   {Array.isArray(flavor) && flavor.map((item, index) => (
                     <div key={index} className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
                       <div className="bg-white w-full place-content-center pl-3 rounded-sm text-sm">

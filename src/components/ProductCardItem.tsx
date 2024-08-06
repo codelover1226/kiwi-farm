@@ -56,9 +56,9 @@ export function ProductCardItem({
 
   let heightCard = React.useMemo(() => {
     if (isAgency || isAdmin || isCart) {
-      return `max-w-sm h-[576px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
+      return `max-w-sm h-[556px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     } else {
-      return `max-w-sm h-[576px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
+      return `max-w-sm h-[556px] rounded overflow-hidden shadow-lg p-2 hover:bg-accent`;
     }
   }, [isAgency, isAdmin, isCart]);
 
@@ -103,12 +103,12 @@ export function ProductCardItem({
     toast.success("You just added an item successfully");
   };
 
-  function truncateWithEllipsis(str, initialLimit = 60, finalLimit = 100) {
-    if (str.length <= initialLimit) {
+  function truncateWithEllipsis(str, finalLimit = 100) {
+    if (str.length <= finalLimit) {
       return str;
     }
   
-    let truncatedStr = str.slice(0, initialLimit);
+    let truncatedStr = str.slice(0, finalLimit);
     if (str.length >= finalLimit) {
       truncatedStr = str.slice(0, finalLimit - 3) + '...';
     }
@@ -133,10 +133,7 @@ export function ProductCardItem({
           </CardHeader>
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
-                {(isAgency || isAdmin || isCart) && <div className='text-center'>
-                  <pre>price    : ${price}</pre>
-                </div>}
-              <div className="text-sm font-normal text-center ">
+              <div className="text-sm font-normal text-center mt-5">
                 {truncateWithEllipsis(product.description)}
               </div>
             </CardDescription>
@@ -201,16 +198,16 @@ export function ProductCardItem({
           </button>
         </div>
       )}
-      <DialogContent className="w-[300px] h-[500px]" style={{ scrollbarWidth: "auto" }}>
+      <DialogContent className="h-[600px]" style={{ scrollbarWidth: "auto", width: '400px' }}>
         <DialogHeader>
           <DialogTitle className="text-center">{product.title}</DialogTitle>
           <DialogDescription>
             <Image
-              className="w-full bg-white rounded-full aspect-square object-cover"
+              className="w-[350px] h-[350px] bg-white rounded-full aspect-square object-cover"
               src={product.image ? product.image : "null"}
               alt="Null"
-              width={300}
-              height={300}
+              width={250}
+              height={250}
             />
             <div className="text-sm font-normal text-center ">
               {product.description}

@@ -219,7 +219,7 @@ export default function Home() {
                                 { 
                                   product?.flavor?.map((item, index) => (
                                     <option key={index} value={item.name}>
-                                      {item.name}
+                                      {item.name}  ${item.price}
                                     </option>
                                   ))
                                 }
