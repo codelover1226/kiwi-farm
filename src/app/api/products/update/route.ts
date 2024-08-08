@@ -26,6 +26,7 @@ export async function POST(request : Request, params : {
     const title = formData.get("title");
     const slug = formData.get("slug");
     const description = formData.get("description");
+    const tagline = formData.get("tagline");
     const content = formData.get("content");
     const type = formData.get("type");
     const id = formData.get("id");
@@ -46,6 +47,7 @@ export async function POST(request : Request, params : {
             .update({
                 title,
                 slug,
+                tagline,
                 description,
                 content,
                 type,

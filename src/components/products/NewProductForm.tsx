@@ -29,11 +29,13 @@ import {
 import { CustomSelect } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-const types = ["flower", "edible", "extract", "pre-roles", "Miscellanous"];
+const types = ["flower", "edible", "extract", "pre-rolls", "miscellanous"];
+const types_disable = ["pre-rolls", "miscellanous"];
 
 export const newProductSchema = z.object({
   title: z.string().min(1, { message: "title is required." }),
   slug: z.string().min(1, { message: "slug is required." }),
+  tagline: z.string().min(1, { message: "tagline is required." }),
   description: z.string().min(1, { message: "description is required." }),
   content: z.string().min(1, { message: "description is required." }),
   image: z.string(),
@@ -72,8 +74,10 @@ export function NewProductForm() {
       dispatch(setSelectedProduct("-1"));
       return;
     }
+    // alert(product.tagline);
     form.setValue("title", product.title);
     form.setValue("slug", product.slug);
+    form.setValue("tagline", product.tagline === null ? "" : product.tagline);
     form.setValue("description", product.description);
     form.setValue("type", product.type);
     form.setValue("image", product.image);
@@ -94,6 +98,7 @@ export function NewProductForm() {
     defaultValues: {
       title: "",
       slug: "slug",
+      tagline: "",
       description: "",
       content: "default",
       image: "",
@@ -125,6 +130,7 @@ export function NewProductForm() {
           form.setValue("title", "");
           form.setValue("slug", "");
           form.setValue("description", "");
+          form.setValue("tagline", "");
           form.setValue("type", null);
           form.setValue("image", "");
           setFlavor([]);
@@ -266,6 +272,35 @@ export function NewProductForm() {
             <div className="mt-0 w-full min-w-[128px]">
               <FormField
                 control={form.control}
+                name="tagline"
+                render={({ field }) => (
+                  <FormItem className="flex w-full flex-wrap justify-center gap-3">
+                    <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
+                      Tagline :
+                    </FormLabel>
+                    <FormControl
+                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      style={{
+                        marginTop: 0,
+                      }}
+                    >
+                      <div>
+                        <Input
+                          maxLength={40}
+                          className="bg-white mt-0"
+                          placeholder="Tagline"
+                          {...field}
+                        />
+                        <FormMessage className="absolute" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="mt-0 w-full min-w-[128px]">
+              <FormField
+                control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem className="flex w-full flex-wrap justify-center gap-3">
@@ -312,6 +347,7 @@ export function NewProductForm() {
                           value={field.value}
                           onValueChange={handleChangeType}
                           values={types}
+                          disables={types_disable}
                           placeholder={"Type"}
                           className={"h-9"}
                         />

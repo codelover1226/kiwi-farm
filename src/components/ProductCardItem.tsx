@@ -53,6 +53,7 @@ export function ProductCardItem({
   const isCart = useAppSelector(selectIsCart);
   const [coupon, setCoupon] = useState(null);
   const [price, setPrice] = useState<number | null >(0);
+  console.log(product, "---<>>");
 
   let heightCard = React.useMemo(() => {
     if (isAgency || isAdmin || isCart) {
@@ -103,17 +104,17 @@ export function ProductCardItem({
     toast.success("You just added an item successfully");
   };
 
-  function truncateWithEllipsis(str, finalLimit = 100) {
-    if (str.length <= finalLimit) {
-      return str;
-    }
+  // function truncateWithEllipsis(str, finalLimit = 100) {
+  //   if (str?.length <= finalLimit) {
+  //     return str;
+  //   }
   
-    let truncatedStr = str.slice(0, finalLimit);
-    if (str.length >= finalLimit) {
-      truncatedStr = str.slice(0, finalLimit - 3) + '...';
-    }
-    return truncatedStr;
-  }
+  //   let truncatedStr = str?.slice(0, finalLimit);
+  //   if (str?.length >= finalLimit) {
+  //     truncatedStr = str?.slice(0, finalLimit - 3) + '...';
+  //   }
+  //   return truncatedStr;
+  // }
 
   return (
     <div>
@@ -134,7 +135,7 @@ export function ProductCardItem({
           <CardContent className='text-xl'>
             <CardDescription className='text-xl text-start font-bold px-4'>
               <div className="text-sm font-normal text-center mt-5">
-                {truncateWithEllipsis(product.description)}
+                {product.tagline}
               </div>
             </CardDescription>
           </CardContent>
@@ -151,13 +152,14 @@ export function ProductCardItem({
                 value={selectedOption}
                 onChange={handleChange}
               >
-                <option value="">Flavor</option>
+                <option value="">Select Option</option>
                 {product.flavor &&
                   product.flavor.map((item, index) => (
                     <option key={index} value={index}>
                       {item.name} - ${item.price}
                     </option>
-                  ))}
+                  ))
+                }
               </select>
             </div>
           </div>

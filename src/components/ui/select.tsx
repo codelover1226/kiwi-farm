@@ -8,9 +8,11 @@ interface SelectDemoProps {
   onValueChange: (user: string) => void; 
   values: string[],
   placeholder: string,
-  className: string
+  className: string,
+  disables: string[]
 }
-export const CustomSelect: React.FC<SelectDemoProps> = ({value, onValueChange, values, placeholder, className}) => (
+
+export const CustomSelect: React.FC<SelectDemoProps> = ({value, onValueChange, values, placeholder, className, disables}) => (
   <Select.Root value={value} onValueChange={onValueChange}>
     <Select.Trigger
       className={classnames(
@@ -33,7 +35,7 @@ export const CustomSelect: React.FC<SelectDemoProps> = ({value, onValueChange, v
           <Select.Group>
             {values.map((v, index) => {    
               return (
-              <SelectItem key={"select" + v} value={v} className='capitalize'>{v}</SelectItem>
+              <SelectItem key={"select" + v} value={v} className='capitalize' disabled={disables.includes(v)}>{v}</SelectItem>
             )})}
           </Select.Group>
         </Select.Viewport>

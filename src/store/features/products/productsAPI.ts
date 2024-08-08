@@ -5,6 +5,7 @@ export interface IProduct {
   title: string;
   slug: string;
   price: string;
+  tagline: string;
   description: string;
   content: JsonObject;
   image: string;

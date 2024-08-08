@@ -9,11 +9,9 @@ import {
 } from '@/components/ui/card';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
-import NavigationIcon from '@mui/icons-material/Navigation';
 import { Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuList from './MenuList';
-import { Button, List, ListItem, ListItemText } from '@mui/material';
 
 export default function ProductPage() {
   const [open, setOpen] = React.useState(false);
@@ -95,13 +93,14 @@ export default function ProductPage() {
           <Fab variant="extended" color="primary" className='w-[150px] bg-green-700 text-white' onClick={toggleDrawer(true)}
             style={{
               position: 'fixed',
-              bottom: '50px',
-              right: '20px',
+              bottom: '150px',
+              right: '-30px',
               zIndex: 1000,
+              transform: 'rotate(270deg)',
+              transition: 'transform 0.3s ease-in-out'
             }}
           >
-            <NavigationIcon sx={{ mr: 1 }} />
-              Price List
+            <p className='text-2xl mb-[5px]'>Specials</p>
           </Fab>
         </Box>
       </div>

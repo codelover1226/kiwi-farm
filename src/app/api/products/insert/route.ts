@@ -28,6 +28,7 @@ export async function POST(req : Request) {
         const title = formData.get("title");
         const slug = formData.get("slug");
         const description = formData.get("description");
+        const tagline = formData.get("tagline");
         const content = formData.get("content");
         const quantity = formData.get("quantity");
         const type = formData.get("type"); 
@@ -39,6 +40,7 @@ export async function POST(req : Request) {
             .insert({
               title,
               slug,
+              tagline,
               description,
               content,
               quantity,
