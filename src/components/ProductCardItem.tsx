@@ -25,6 +25,62 @@ import {
   selectIsCart,
 } from "@/store/features/auth/authSlice";
 import { toast } from "react-hot-toast";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import 'react-quill/dist/quill.snow.css'
+import _ from 'lodash';
+const HtmlToReactParser = require('html-to-react').Parser;
+const HtmlToReact = require('html-to-react');
+const htmlToReactParser = new HtmlToReactParser();
+const processNodeDefinitions = new HtmlToReact.ProcessNodeDefinitions();
+
+const processingInstructions = [
+  {
+    shouldProcessNode: function (node) {
+      return node.name && node.name === 'h1';
+    },
+    processNode: function (node, children, index) {
+      return React.createElement('h1', {key: index, class:"text-2xl"}, children);
+    }
+  },
+  {
+    shouldProcessNode: function (node) {
+      return node.name && node.name === 'h2';
+    },
+    processNode: function (node, children, index) {
+      return React.createElement('h2', {key: index, class:"text-xl"}, children);
+    }
+  },
+  {
+    shouldProcessNode: function (node) {
+      return node.name && node.name === 'h3';
+    },
+    processNode: function (node, children, index) {
+      return React.createElement('h3', {key: index, class:"text-lg"}, children);
+    }
+  },
+  {
+    shouldProcessNode: function (node) {
+      return node.name && node.name === 'ol';
+    },
+    processNode: function (node, children, index) {
+      return React.createElement('ol', {key: index, class:"pl-10 list-decimal"}, children);
+    }
+  },
+  {
+    shouldProcessNode: function (node) {
+      return node.name && node.name === 'ul';
+    },
+    processNode: function (node, children, index) {
+      return React.createElement('ul', {key: index, class:"pl-10 list-disc md:list-circle lg:list-square"}, children);
+    }
+  },
+  {
+    shouldProcessNode: function (node) {
+      return true;
+    },
+    processNode: processNodeDefinitions.processDefaultNode,
+  },
+];
 
 import "./user.css";
 export interface CartProduct {
@@ -53,7 +109,6 @@ export function ProductCardItem({
   const isCart = useAppSelector(selectIsCart);
   const [coupon, setCoupon] = useState(null);
   const [price, setPrice] = useState<number | null >(0);
-  console.log(product, "---<>>");
 
   let heightCard = React.useMemo(() => {
     if (isAgency || isAdmin || isCart) {
@@ -103,18 +158,6 @@ export function ProductCardItem({
     window.dispatchEvent(new Event("storage"));
     toast.success("You just added an item successfully");
   };
-
-  // function truncateWithEllipsis(str, finalLimit = 100) {
-  //   if (str?.length <= finalLimit) {
-  //     return str;
-  //   }
-  
-  //   let truncatedStr = str?.slice(0, finalLimit);
-  //   if (str?.length >= finalLimit) {
-  //     truncatedStr = str?.slice(0, finalLimit - 3) + '...';
-  //   }
-  //   return truncatedStr;
-  // }
 
   return (
     <div>
@@ -211,8 +254,8 @@ export function ProductCardItem({
               width={250}
               height={250}
             />
-            <div className="text-sm font-normal text-center ">
-              {product.description}
+            <div className="text-sm font-normal text-center mt-5">
+              {htmlToReactParser.parseWithInstructions(product.description, ()=>true, processingInstructions)}
             </div>
           </DialogDescription>
         </DialogHeader>

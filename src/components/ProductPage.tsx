@@ -1,5 +1,6 @@
 'use client'
 import React from 'react';
+// import { StickyButton } from './StickyButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -7,17 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import Box from '@mui/material/Box';
-import Fab from '@mui/material/Fab';
-import { Drawer, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import MenuList from './MenuList';
 
 export default function ProductPage() {
-  const [open, setOpen] = React.useState(false);
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
   
   const categories = [
     {
@@ -67,63 +59,30 @@ export default function ProductPage() {
   });
 
   return (
-  <div>
-    {/* {!isVisitor ? */}
-      <div className='flex min-h-screen flex-col items-center justify-between py-10'>
-        <div className='p-10'>
-          <Image
-            src='/kiwi_logo.jpg'
-            alt='Kiwi Farms - Premium Cannabis'
-            width={350}
-            height={350}
-            className='rounded'
-          />
+    <div>
+      {/* {!isVisitor ? */}
+        <div className='flex min-h-screen flex-col items-center justify-between py-10'>
+          <div className='p-10'>
+            <Image
+              src='/kiwi_logo.jpg'
+              alt='Kiwi Farms - Premium Cannabis'
+              width={350}
+              height={350}
+              className='rounded'
+            />
+          </div>
+    
+          <h1 className='text-2xl pb-6'>Nothing For Sale</h1>
+    
+          <h2 className='text-lg pb-8'>Educational Purposes Only</h2>
+    
+          <h2 className='text-lg pb-10'>(Click Image For More Details)</h2>
+    
+          <div className='flex flex-row flex-wrap gap-6 justify-center m-2'>
+            {categoriesRender}
+          </div>
+          {/* <StickyButton /> */}
         </div>
-  
-        <h1 className='text-2xl pb-6'>Nothing For Sale</h1>
-  
-        <h2 className='text-lg pb-8'>Educational Purposes Only</h2>
-  
-        <h2 className='text-lg pb-10'>(Click Image For More Details)</h2>
-  
-        <div className='flex flex-row flex-wrap gap-6 justify-center m-2'>
-          {categoriesRender}
-        </div>
-        <Box sx={{ '& > :not(style)': { m: 1 } }} className="w-full flex justify-end sm:mr-[250px] mt-[50px]">
-          <Fab variant="extended" color="primary" className='w-[150px] bg-green-700 text-white' onClick={toggleDrawer(true)}
-            style={{
-              position: 'fixed',
-              bottom: '150px',
-              right: '-30px',
-              zIndex: 1000,
-              transform: 'rotate(270deg)',
-              transition: 'transform 0.3s ease-in-out'
-            }}
-          >
-            <p className='text-2xl mb-[5px]'>Specials</p>
-          </Fab>
-        </Box>
-      </div>
-      <Drawer open={open} onClose={toggleDrawer(false)} anchor="right" 
-        sx={{
-            '& .MuiDrawer-paper': {
-              width: '100%', // Full width
-              height: '100%', // Full height
-            },
-          }}
-      >
-        <Box
-          sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', padding: 2 }}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}
-        >
-          <IconButton onClick={toggleDrawer(false)}>
-            <CloseIcon />
-          </IconButton>
-          <MenuList />
-        </Box>
-      </Drawer>
-  </div>
+    </div>
   );
 }

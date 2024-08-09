@@ -4,13 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, MouseEvent, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import CurrencyInput from "react-currency-input-field";
 import Image from "next/image";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,9 +27,22 @@ import {
 } from "@/store/features/products/productsSlice";
 import { CustomSelect } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import classnames from 'classnames';
+import React, { forwardRef } from "react";
+import { JsonObject } from "type-fest";
+import { selectIsAgency, selectIsAdmin } from "@/store/features/auth/authSlice";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import 'react-quill/dist/quill.snow.css'
+import dynamic from 'next/dynamic';
+import _ from 'lodash';
 
-const types = ["flower", "edible", "extract", "pre-rolls", "miscellanous"];
-const types_disable = ["pre-rolls", "miscellanous"];
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const HtmlToReactParser = require('html-to-react').Parser;
+const htmlToReactParser = new HtmlToReactParser();
+const HtmlToReact = require('html-to-react');
+const processNodeDefinitions = new HtmlToReact.ProcessNodeDefinitions();
+
+const types = ["flower", "edible", "extract", "pre-role", "miscellaneous"];
 
 export const newProductSchema = z.object({
   title: z.string().min(1, { message: "title is required." }),
@@ -238,7 +250,7 @@ export function NewProductForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex py-5 mb-0 justify-center lg:px-20 xl:px-40">
-        <div className="flex flex-grow md:flex-row flex-wrap text-left  items-center gap-2 px-6">
+        <div className="flex flex-grow md:flex-row flex-wrap text-left items-center gap-2 px-6">
           <div className="flex flex-row flex-wrap bg-accent rounded-sm p-6 justify-evenly sm:gap-6 gap-4">
             <div className="mt-0 w-full min-w-[128px]">
               <FormField
@@ -250,7 +262,7 @@ export function NewProductForm() {
                       Name :
                     </FormLabel>
                     <FormControl
-                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -279,7 +291,7 @@ export function NewProductForm() {
                       Tagline :
                     </FormLabel>
                     <FormControl
-                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -308,17 +320,24 @@ export function NewProductForm() {
                       Description :
                     </FormLabel>
                     <FormControl
-                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] "
                       style={{
                         marginTop: 0,
                       }}
                     >
-                      <div>
-                        <textarea
+                      <div className="bg-white">
+                        <ReactQuill
+                          theme='snow'
+                          // value={convertedText}
+                          className="w-full border-none"
+                          style={{minHeight: '250px', maxHeight: '350px'}}
+                          {...field}
+                        />
+                        {/* <textarea
                           className="bg-white mt-0 w-full p-3"
                           placeholder="Description"
                           {...field}
-                        />
+                        /> */}
                         <FormMessage className="absolute" />
                       </div>
                     </FormControl>
@@ -336,7 +355,7 @@ export function NewProductForm() {
                       Type :
                     </FormLabel>
                     <FormControl
-                      className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                      className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] "
                       style={{
                         marginTop: 0,
                       }}
@@ -347,7 +366,6 @@ export function NewProductForm() {
                           value={field.value}
                           onValueChange={handleChangeType}
                           values={types}
-                          disables={types_disable}
                           placeholder={"Type"}
                           className={"h-9"}
                         />
@@ -369,7 +387,7 @@ export function NewProductForm() {
                         Image :
                       </FormLabel>
                       <FormControl
-                        className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] "
+                        className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] "
                         style={{
                           marginTop: 0,
                         }}
@@ -404,7 +422,7 @@ export function NewProductForm() {
                 <FormLabel className="w-4/12 min-w-[90px] max-w-[100px] self-center ">
                   Flavor :
                 </FormLabel>
-                <div className="w-full sm:w-6/12 min-w-[128px] max-w-[350px] flex space-x-1">
+                <div className="w-full sm:w-3/4 min-w-[128px] max-w-[400px] flex space-x-1">
                   <Input
                     type="text"
                     className="bg-white mt-0 sm:w-full w-full"
@@ -467,7 +485,7 @@ export function NewProductForm() {
                 </FormLabel> : <></>
                 }
                 
-                <div className="w-full sm:w-6/12 min-w-[128px] max-w-[350px]">
+                <div className="w-full sm:w-3/4 min-w-[128px] max-w-[400px]">
                   {/* {
                     flavor.length !== 0 && 
                     <div className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">

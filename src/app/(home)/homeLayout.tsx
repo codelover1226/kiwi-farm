@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Popup from "@/components/Popup";
 import Popup1 from "@/components/Popup1";
 import { useState } from "react";
+import { StickyButton } from "@/components/StickyButton";
 
 export default function HomeLayout({
   children,
@@ -27,6 +28,7 @@ export default function HomeLayout({
           <NavBar backend={false}/>
 
           {children}
+          <StickyButton />
 
           <Footer />
         </ThemeProvider>
