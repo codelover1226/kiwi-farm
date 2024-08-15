@@ -4,19 +4,19 @@ import { useEffect, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { CartProduct } from "@/components/ProductCardItem";
 import { IProduct } from '@/store/features/products/productsAPI';
-import { useRouter } from 'next/navigation';
 import { selectProducts, getProducts } from '@/store/features/products/productsSlice';
-import data from'./../../../lib/uscity.json'
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { CustomSelect } from "@/components/ui/select"
 import { toast } from "react-hot-toast";
 import { selectUser } from "@/store/features/auth/authSlice";
 import {ICoupons} from "./../../(backend)/dashboard/normalCoupon/page"
 import _ from 'lodash';
+import Options from "@/components/Options";
+import axios from "axios";
+import haversineDistance from "@/utils/calculateDistance";
 
 import {
   Form,
@@ -26,7 +26,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Item } from "@radix-ui/react-navigation-menu";
 
 const newCustomerSchema = z.object({
   name: z.string().min(1, { message: "name is required." }),
@@ -34,8 +33,6 @@ const newCustomerSchema = z.object({
   phoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, { message: "Phone number must be in the format 123-456-7890" }),
   refName: z.string().min(1, { message: "name is required." }),
   refPhoneNumber: z.string().regex(/^\d{3}-\d{3}-\d{4}$/, { message: "Phone number must be in the format 123-456-7890" }),
-  state: z.string().min(1, {message: "Please select your state"}),
-  city: z.string().min(1, {message: "Please select your city"}),
   address: z.string().min(1, {message: "Please select your address"}),
   deliveryInstruction: z.string().min(1, {message: "Please Enter your Delivery Instruction"}),
 });
@@ -52,6 +49,10 @@ export default function About() {
   const [cartItems, setCartItems] = useState(JSON.parse(localStorage.getItem('cartItems') || '[]'));
   const [couponVal, setCouponVal] = useState<ICoupons>(null)
   const [subTotal, setSubTotal] = useState<Number>(0);
+  const [locations, setLocations] = useState<any>([1, 2]);
+  const [location, setLocation] = useState<any>(null);
+  const [comLocation, setComLocation] = useState<any>(null);
+  const [ cost, setCost ] = useState(0);
   let tempSub: number = 0;
 
   const user = useAppSelector(selectUser);
@@ -81,6 +82,36 @@ export default function About() {
   const updateProducts = () => {
     dispatch(getProducts({type:"all", user: user_id1}));
   }
+
+  const fetchCities = async () => {
+    try {
+      console.log("ok");
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json`,
+        {
+          params: {
+            address: location,
+            key: "AIzaSyD5SWtYvepl_a7bHPs9S2dUSCYVF6Whgmg",
+          },
+        }
+      );
+
+      if (response.data.status === "OK") {
+        let _locations = response.data.results;
+        setLocations(_locations);
+      } else {
+        setLocations([]);
+        throw new Error("Error fetching cities");
+      }
+    } catch (err) {
+      console.error(err);
+      setLocations([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchCities();
+  }, [location]);
   
   useEffect(() => {
     updateProducts();
@@ -104,13 +135,13 @@ export default function About() {
       phoneNumber: "",
       refName: "",
       refPhoneNumber: "",
-      state: "",
-      city: "",
+      address: "",
       deliveryInstruction: ""
     },
   });
-//
-  async function onSubmit(values: z.infer<typeof newCustomerSchema>) {
+
+  async function onSubmit(values: z.infer<typeof newCustomerSchema>) {    
+    alert( "$" + cost);
     try {
       const formData = new FormData();
       for (const key in values) {
@@ -132,7 +163,6 @@ export default function About() {
         updateProducts();
         localStorage.removeItem("cartItems")
         toast.success("Successful!.");
-        // router.push('/thanks')
       } else {
         const error = await response.json();
         toast.error(error);
@@ -143,6 +173,7 @@ export default function About() {
     }
     setIsLoading(false);
   }
+  
   const onCouponChange = (event: any) => {
     setCouponCode(event.target.value)
   }
@@ -151,6 +182,7 @@ export default function About() {
     event.preventDefault(false)
     setCouponField(!couponField)
   }
+  
   async function applyCoupon (event:any){
     event.preventDefault(false);
     const formData = new FormData();
@@ -202,6 +234,7 @@ export default function About() {
       toast.error(error)
     }
   }
+
   return (
     <main className=" min-h-[68vh] mb-20 pt-10 pb-10 px-5 md:px-20">
       <p className="w-full text-center text-[30px]">
@@ -293,65 +326,6 @@ export default function About() {
                   <div className="w-full flex space-x-2">
                     <FormField
                       control={form.control}
-                      name="state"
-                      render={({ field }) => (
-                        <FormItem className="sm:flex w-full justify-center gap-3">
-                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            State :
-                          </FormLabel>
-                          <FormControl
-                            className="w-full min-w-[128px]  "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Please input your state"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    
-                  </div>
-                  <div className="w-full">
-                    <FormField
-                      control={form.control}
-                      name="city"
-                      render={({ field }) => (
-                        <FormItem className="sm:flex w-full justify-center gap-3">
-                          <FormLabel className="min-w-[90px] max-w-[100px] self-center text-xs sm:text-sm text-black font-semibold ">
-                            City :
-                          </FormLabel>
-                          <FormControl
-                            className="w-full min-w-[128px]  "
-                            style={{
-                              marginTop: 0,
-                            }}
-                          >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Please input your state"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <FormField
-                      control={form.control}
                       name="address"
                       render={({ field }) => (
                         <FormItem className="sm:flex w-full justify-center gap-3">
@@ -364,19 +338,44 @@ export default function About() {
                               marginTop: 0,
                             }}
                           >
-                            <div>
-                              <Input
-                                maxLength={40}
-                                className="bg-white mt-0"
-                                placeholder="Input your delivery Address"
-                                {...field}
-                              />
-                              <FormMessage className="absolute" />
-                            </div>
+                          <div className="relative">
+                            <Input
+                              maxLength={40}
+                              className="bg-white mt-0"
+                              placeholder="Enter address"
+                              {...field}
+                              value={location}
+                              onChange={(e) => setLocation(e.target.value)}
+                            />
+                            <FormMessage className="absolute" />
+                            <Options
+                              data={locations && locations}
+                              setPosition={(p) => {
+                                setLocation(p.formatted_address);
+                                form.setValue('address', p.formatted_address);
+                                setComLocation(p);
+                                let x = [];
+                                setLocations(x);
+                                let distance = haversineDistance(p.geometry.location.lat, p.geometry.location.lng, 40.623093, -73.63827);
+                                if (distance < 5) {
+                                  setCost(0);
+                                }else if (5 < distance && 10 > distance) {
+                                  setCost(10);
+                                }else if (10 < distance && 25 > distance) {
+                                  setCost(20);
+                                }else if (15 < distance && 20 > distance) {
+                                  setCost(25);
+                                }else {
+                                  setCost(10000);
+                                }
+                              }}
+                            />
+                          </div>
                           </FormControl>
                         </FormItem>
                       )}
                     />
+                    
                   </div>
                   <div className="w-full">
                     <FormField

@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import _ from 'lodash';
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -27,14 +28,12 @@ import {
 } from "@/store/features/products/productsSlice";
 import { CustomSelect } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import classnames from 'classnames';
 import React, { forwardRef } from "react";
 import { JsonObject } from "type-fest";
 import { selectIsAgency, selectIsAdmin } from "@/store/features/auth/authSlice";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import 'react-quill/dist/quill.snow.css'
 import dynamic from 'next/dynamic';
-import _ from 'lodash';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const HtmlToReactParser = require('html-to-react').Parser;
@@ -49,10 +48,8 @@ export const newProductSchema = z.object({
   slug: z.string().min(1, { message: "slug is required." }),
   tagline: z.string().min(1, { message: "tagline is required." }),
   description: z.string().min(1, { message: "description is required." }),
-  content: z.string().min(1, { message: "description is required." }),
   image: z.string(),
   type: z.string().min(1, { message: "type is required." }),
-  price: z.number(),
 });
 
 export type TNewProductSchema = z.infer<typeof newProductSchema>;
@@ -71,9 +68,11 @@ export function NewProductForm() {
   const [flavor, setFlavor] = useState([]);
   const [flavor_name, setFlavorName] = useState('');
   const [flavor_qty, setFlavorQty] = useState(0);
+  const [price, setPrice] = useState<number | 0>(0);
 
   
   useEffect(() => {
+    console.log("OKOKOK--->>>");
     if (selectedProduct == "-1") {
       form.reset();
       setFlavor([]);
@@ -93,7 +92,6 @@ export function NewProductForm() {
     form.setValue("description", product.description);
     form.setValue("type", product.type);
     form.setValue("image", product.image);
-    form.setValue("price", Number(product.price));
     setFlavor(Array.isArray(product.flavor)? product.flavor : []);
 
     if (product.image) {
@@ -112,9 +110,7 @@ export function NewProductForm() {
       slug: "slug",
       tagline: "",
       description: "",
-      content: "default",
       image: "",
-      price: 0,
       type: "flower"
     },
   });
@@ -148,7 +144,7 @@ export function NewProductForm() {
           setFlavor([]);
           setImgFileName("");
           setPreviewUrl("");
-          form.setValue("price", 0);
+          setPrice(0);
           dispatch(getProducts({ type: "all", user: user.id }));
         } else {
           const error = await response.json();
@@ -202,7 +198,7 @@ export function NewProductForm() {
     name: string;
     values: any;
   }) => {
-    form.setValue("price", Number(value));
+    setPrice(Number(value));
   };
   const handleInputChange = (event: any) => {
     const target = event.target;
@@ -229,16 +225,17 @@ export function NewProductForm() {
       const newFlavor = {
         name: flavor_name,
         qty: flavor_qty,
-        price: form.getValues('price')
+        price: price
       };
     
       setFlavor([...flavor, newFlavor]);
     
       setFlavorName('');
-      form.setValue('price', 0);
+      setPrice(0);
       setFlavorQty(0);
     }
   };
+
   const handleFlavorDelete = (event: any, indexToDelete: number) => {
     event.preventDefault()
     setFlavor(prevFlavor => {
@@ -246,6 +243,12 @@ export function NewProductForm() {
       return newFlavor;
     });
   };  
+
+  const handleUpdateFlavor = (key, id, value) => {
+    let temp = _.cloneDeep(flavor);
+    temp[key][id] = value;
+    setFlavor(temp);
+  }
 
   return (
     <Form {...form}>
@@ -432,11 +435,10 @@ export function NewProductForm() {
                     id="fn"
                   />
                   <FormField
-                    control={form.control}
                     name="price"
                     render={({ field }) => (
-                      <FormItem className="flex w-full sm:w-[60px] flex-wrap justify-center">
-                        <FormControl
+                      <div className="flex w-full sm:w-[60px] flex-wrap justify-center">
+                        <div
                           className="w-full sm:w-[60px]"
                           style={{
                             marginTop: 0,
@@ -445,7 +447,7 @@ export function NewProductForm() {
                           <div>
                             <CurrencyInput
                               placeholder="Please enter a number"
-                              defaultValue={1000}
+                              defaultValue={0}
                               decimalsLimit={2}
                               value={Number.isNaN(field.value)? 0: field.value}
                               prefix="$"
@@ -455,8 +457,8 @@ export function NewProductForm() {
                               }
                             />
                           </div>
-                        </FormControl>
-                      </FormItem>
+                        </div>
+                      </div>
                     )}
                   />
                   <Input
@@ -486,31 +488,34 @@ export function NewProductForm() {
                 }
                 
                 <div className="w-full sm:w-3/4 min-w-[128px] max-w-[400px]">
-                  {/* {
-                    flavor.length !== 0 && 
-                    <div className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
-                      <div className="w-[200px] place-content-center pl-3 rounded-sm text-sm">
-                        Flavor
-                      </div>
-                      <div className="mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
-                        Price
-                      </div>
-                      <div className="mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
-                        QTY
-                      </div>
-                    </div>
-                  } */}
                   {Array.isArray(flavor) && flavor.map((item, index) => (
-                    <div key={index} className="min-w-[128px] max-w-[350px] flex space-x-2 my-2">
-                      <div className="bg-white w-full place-content-center pl-3 rounded-sm text-sm">
-                        {item.name}
-                      </div>
-                      <div className="bg-white mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
-                        {item.price}
-                      </div>
-                      <div className="bg-white mt-0 w-[15px] sm:w-[60px] place-content-center text-center rounded-sm text-sm">
-                        {item.qty}
-                      </div>
+                    <div key={index} className="min-w-[128px] max-w-[400px] flex space-x-1 my-2">
+                      <Input
+                        type="text"
+                        className="bg-white mt-0 sm:w-full w-full"
+                        placeholder="Flavor"
+                        value={flavor[index].name}
+                        onChange={(e)=> handleUpdateFlavor(index, e.target.id, e.target.value)}
+                        id="name"
+                      />
+                      <Input
+                        type="number"
+                        className="flex w-full sm:w-[60px] flex-wrap justify-center"
+                        placeholder="Qty"
+                        value={flavor[index].price}
+                        min={0}
+                        onChange={(e)=> handleUpdateFlavor(index, e.target.id, e.target.value)}
+                        id="price"
+                      />
+                      <Input
+                        type="number"
+                        className="bg-white mt-0 w-full sm:w-[60px]"
+                        placeholder="Qty"
+                        value={flavor[index].qty}
+                        min={0}
+                        onChange={(e)=> handleUpdateFlavor(index, e.target.id, e.target.value)}
+                        id="qty"
+                      />
                       <Button
                         className="bg-white text-black hover:bg-[#ffffef]"
                         id="flav_delete"
