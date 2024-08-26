@@ -173,7 +173,7 @@ export default function About() {
     }
     setIsLoading(false);
   }
-  
+
   const onCouponChange = (event: any) => {
     setCouponCode(event.target.value)
   }

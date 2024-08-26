@@ -30,7 +30,6 @@ export async function POST(req : Request) {
         const description = formData.get("description");
         const tagline = formData.get("tagline");
         const content = formData.get("content");
-        const quantity = formData.get("quantity");
         const type = formData.get("type"); 
         const flavorString = formData.get("flavor");
         const flavor = flavorString? JSON.parse(flavorString as string) : null;
@@ -43,7 +42,6 @@ export async function POST(req : Request) {
               tagline,
               description,
               content,
-              quantity,
               type,
               user_id,
               image: imgUrl,
